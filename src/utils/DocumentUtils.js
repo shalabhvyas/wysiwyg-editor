@@ -10,7 +10,7 @@ export function convertToSlate(doc) {
           children: [{ text: "" }],
         };
       default:
-        throw new Error("Unhandled node type");
+        throw new Error(`Unhandled node type: ${node.type}`);
     }
   });
 }
@@ -21,17 +21,19 @@ export function convertFromSlate(nodes) {
       switch (node.type) {
         case "rich-text":
           return {
+            id: node.id,
             type: "rich-text",
             children: node.children != null ? Array.from(node.children) : [],
           };
         case "image":
           return {
+            id: node.id,
             type: "image",
             url: String(node.url),
             caption: String(node.caption),
           };
         default:
-          throw new Error("Unhandled node type");
+          throw new Error(`Unhandled node type: ${node.type}`);
       }
     }),
   };

@@ -1,0 +1,12 @@
+.toolbar-btn {
+  cursor: pointer;
+  display: inline-block;
+  margin: 0 8px;
+  padding: 8px;
+  background: gray;
+  text-transform: capitalize;
+}
+
+.is-active {
+  background: blue;
+}
