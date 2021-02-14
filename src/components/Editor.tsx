@@ -1,18 +1,13 @@
-import { DocumentStructure, RichTextComponent } from "../EditorTypes";
-import {
-  Editable,
-  Slate,
-  withReact,
-  useFocused,
-  useSelected,
-} from "slate-react";
+import { DocumentStructure } from "../utils/EditorTypes";
+import { Editable, Slate, withReact } from "slate-react";
 import { useCallback, useMemo } from "react";
 import type { Node } from "slate";
 import type { RenderElementProps } from "slate-react";
 import React from "react";
 import { createEditor } from "slate";
 import { DefaultElement } from "slate-react";
-import ImageElement from "./ImageComponent";
+import ImageComponent from "./ImageComponent";
+import { convertFromSlate, convertToSlate } from "../utils/DocumentUtils";
 
 type EditorProps = {
   document: DocumentStructure;
@@ -28,16 +23,20 @@ function Editor({ document, onChange }: EditorProps): JSX.Element {
     return element.type === "image" ? true : isVoid(element);
   };
 
-  const onRichTextChange = useCallback(
+  const onContentChange = useCallback(
     (content: Node[]) => {
       console.log(content);
-      onChange({ ...document, content });
+      onChange(convertFromSlate(content));
     },
     [onChange, document]
   );
 
   return (
-    <Slate editor={editor} value={document.content} onChange={onRichTextChange}>
+    <Slate
+      editor={editor}
+      value={convertToSlate(document)}
+      onChange={onContentChange}
+    >
       <Editable renderElement={renderElement} />
     </Slate>
   );
@@ -47,7 +46,7 @@ function renderElement(props: RenderElementProps): JSX.Element {
   const { element, children, attributes } = props;
   switch (element.type) {
     case "image":
-      return <ImageElement {...props} />;
+      return <ImageComponent {...props} />;
     case "rich-text":
       return (
         <div {...attributes} content-editable={"true"}>

@@ -1,10 +1,9 @@
 import "./App.css";
 
-import { useMemo, useState } from "react";
-
-import { DocumentStructure } from "./EditorTypes";
+import { DocumentStructure } from "./utils/EditorTypes";
 import Editor from "./components/Editor";
 import React from "react";
+import { useState } from "react";
 
 function App() {
   const [document, updateDocument] = useState<DocumentStructure>({
@@ -22,7 +21,7 @@ function App() {
         type: "image",
         url:
           "https://www.google.com/logos/doodles/2021/valentines-day-2021-6753651837108860.3-law.gif",
-        children: [{ text: "" }],
+        caption: "Image caption",
       },
       {
         type: "rich-text",

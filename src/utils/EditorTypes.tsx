@@ -1,17 +1,16 @@
-import type { Node } from "slate";
+import type { Element } from "slate";
 
-export type RichTextComponent = Node[];
 export type DocumentComponent =
   | {
       type: "rich-text";
-      children: RichTextComponent;
+      children: Element;
     }
   | {
       type: "image";
       url: string;
-      children?: Array<Node>;
+      caption: string;
     };
 
 export type DocumentStructure = {
-  content: Node[];
+  content: DocumentComponent[];
 };
