@@ -1,20 +1,13 @@
-import { DocumentStructure } from "../utils/EditorTypes";
 import { Editable, Slate, withReact } from "slate-react";
+import { convertFromSlate, convertToSlate } from "../utils/DocumentUtils";
 import { useCallback, useMemo } from "react";
-import type { Node } from "slate";
-import type { RenderElementProps } from "slate-react";
+
+import { DefaultElement } from "slate-react";
+import ImageComponent from "./ImageComponent.react";
 import React from "react";
 import { createEditor } from "slate";
-import { DefaultElement } from "slate-react";
-import ImageComponent from "./ImageComponent";
-import { convertFromSlate, convertToSlate } from "../utils/DocumentUtils";
 
-type EditorProps = {
-  document: DocumentStructure;
-  onChange: (doc: DocumentStructure) => void;
-};
-
-function Editor({ document, onChange }: EditorProps): JSX.Element {
+function Editor({ document, onChange }): JSX.Element {
   const editor = useMemo(() => withReact(createEditor()), []);
 
   const { isVoid } = editor;
@@ -28,7 +21,7 @@ function Editor({ document, onChange }: EditorProps): JSX.Element {
       console.log(content);
       onChange(convertFromSlate(content));
     },
-    [onChange, document]
+    [onChange]
   );
 
   return (
@@ -42,7 +35,7 @@ function Editor({ document, onChange }: EditorProps): JSX.Element {
   );
 }
 
-function renderElement(props: RenderElementProps): JSX.Element {
+function renderElement(props): JSX.Element {
   const { element, children, attributes } = props;
   switch (element.type) {
     case "image":

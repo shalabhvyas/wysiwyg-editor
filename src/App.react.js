@@ -1,12 +1,11 @@
 import "./App.css";
 
-import { DocumentStructure } from "./utils/EditorTypes";
-import Editor from "./components/Editor";
+import Editor from "./components/Editor.react";
 import React from "react";
 import { useState } from "react";
 
 function App() {
-  const [document, updateDocument] = useState<DocumentStructure>({
+  const [document, updateDocument] = useState({
     content: [
       {
         type: "rich-text",

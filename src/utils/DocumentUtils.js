@@ -1,24 +1,21 @@
-import { DocumentStructure } from "./EditorTypes";
-import type { Node } from "slate";
-export function convertToSlate(doc: DocumentStructure): Node[] {
+export function convertToSlate(doc) {
   return doc.content.map((node) => {
     switch (node.type) {
       case "rich-text":
         return node;
       case "image":
         return {
-          type: "image",
-          url: node.url,
+          ...node,
           // Slate specific hack that requires void nodes to have a text leaf.
           children: [{ text: "" }],
         };
       default:
-        throw "Unhandled node type";
+        throw new Error("Unhandled node type");
     }
   });
 }
 
-export function convertFromSlate(nodes: Node[]): DocumentStructure {
+export function convertFromSlate(nodes) {
   return {
     content: nodes.map((node: Node) => {
       switch (node.type) {
@@ -34,7 +31,7 @@ export function convertFromSlate(nodes: Node[]): DocumentStructure {
             caption: String(node.caption),
           };
         default:
-          throw "Unhandled node type";
+          throw new Error("Unhandled node type");
       }
     }),
   };

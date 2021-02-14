@@ -1,5 +1,5 @@
-import type { RenderElementProps } from "slate-react";
 import React from "react";
+import type { RenderElementProps } from "slate-react";
 
 const ImageElement = ({
   attributes,
@@ -9,7 +9,8 @@ const ImageElement = ({
   return (
     <div {...attributes}>
       <div contentEditable={false}>
-        <img src={String(element.url)} />
+        <img src={String(element.url)} alt={element.caption} />
+        <span>{element.caption}</span>
       </div>
       {children}
     </div>
