@@ -24,6 +24,7 @@ function Editor({ document, onChange }: EditorProps): JSX.Element {
   const onRichTextChange = useCallback(
     (content: Node[]) => {
       console.log(content);
+      onChange({ ...document, content });
       //   onChange({
       //     ...document,
       //     content: [
@@ -45,10 +46,22 @@ function Editor({ document, onChange }: EditorProps): JSX.Element {
 }
 
 function renderElement(props: RenderElementProps): JSX.Element {
-  const { element } = props;
+  const { element, children, attributes } = props;
   switch (element.type) {
     case "image":
-      return <img src={element.url} />;
+      return (
+        <div {...attributes}>
+          <div content-editable={"false"}>
+            <img src={String(element.url)} />
+          </div>
+        </div>
+      );
+    case "rich-text":
+      return (
+        <div {...attributes} content-editable={"true"}>
+          {children}
+        </div>
+      );
     default:
       return <DefaultElement {...props} />;
   }

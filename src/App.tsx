@@ -24,6 +24,15 @@ function App() {
           "https://www.google.com/logos/doodles/2021/valentines-day-2021-6753651837108860.3-law.gif",
         children: [{ text: "" }],
       },
+      {
+        type: "rich-text",
+        children: [
+          {
+            type: "paragraph",
+            children: [{ text: "dfjlsdfsdf" }],
+          },
+        ],
+      },
     ],
   });
 
