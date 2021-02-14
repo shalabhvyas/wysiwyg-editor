@@ -3,7 +3,7 @@ import "./App.css";
 import { useMemo, useState } from "react";
 
 import { DocumentStructure } from "./EditorTypes";
-import Editor from "./Editor";
+import Editor from "./components/Editor";
 import React from "react";
 
 function App() {
