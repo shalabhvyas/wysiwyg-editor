@@ -19,8 +19,8 @@ function App() {
       {
         type: "image",
         url:
-          "https://www.google.com/logos/doodles/2021/valentines-day-2021-6753651837108860.3-law.gif",
-        caption: "Image caption",
+          "https://cdn.pixabay.com/photo/2016/12/13/05/15/puppy-1903313_1280.jpg",
+        caption: "Cute Puppy",
       },
       {
         type: "rich-text",

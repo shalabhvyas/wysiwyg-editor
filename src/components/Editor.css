@@ -1,0 +1,10 @@
+.editor {
+  background: #fff;
+  box-shadow: rgb(0 0 0 / 10%) 1px 1px 0px inset,
+    rgb(0 0 0 / 7%) 0px -1px 0px inset;
+  border-width: 1 1 1 6;
+  height: 90vh;
+  margin: 20px 0;
+  padding: 20px;
+  width: 100%;
+}
