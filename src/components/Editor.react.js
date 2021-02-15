@@ -5,6 +5,7 @@ import EditorAPI, { renderElement, renderLeaf } from "../utils/EditorAPI";
 import { convertFromSlate, convertToSlate } from "../utils/DocumentUtils";
 import { useCallback, useMemo } from "react";
 
+import { KeyBindings } from "../utils/EditorAPI";
 import React from "react";
 import Toolbar from "./Toolbar.react";
 import { createEditor } from "slate";
@@ -22,6 +23,11 @@ function Editor({ document, onChange }): JSX.Element {
     [onChange]
   );
 
+  const onKeyDown = useCallback(
+    (event) => KeyBindings.onKeyDown(editorAPI, event),
+    [editorAPI]
+  );
+
   return (
     <EditorAPIContext.Provider value={editorAPI}>
       <Slate
@@ -31,7 +37,11 @@ function Editor({ document, onChange }): JSX.Element {
       >
         <Toolbar />
         <div className="editor">
-          <Editable renderElement={renderElement} renderLeaf={renderLeaf} />
+          <Editable
+            renderElement={renderElement}
+            renderLeaf={renderLeaf}
+            onKeyDown={onKeyDown}
+          />
         </div>
       </Slate>
     </EditorAPIContext.Provider>

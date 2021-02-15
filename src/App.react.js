@@ -9,20 +9,22 @@ function App() {
   const [document, updateDocument] = useState({
     content: [
       {
-        id: uuid(),
-        type: "rich-text",
+        type: "h1",
+        text: "Heading H1",
+      },
+      {
+        type: "h2",
+        text: "Heading H2",
+      },
+      {
+        type: "paragraph",
         children: [
-          {
-            type: "paragraph",
-            children: [
-              { text: "A line of text in a paragraph." },
-              { text: " Rich", bold: true },
-              { text: " text, " },
-              { text: "much", italic: true },
-              { text: " better than a " },
-              { text: "<textarea>", code: true },
-            ],
-          },
+          { text: "A line of text in a paragraph." },
+          { text: " Rich", bold: true },
+          { text: " text, " },
+          { text: "much", italic: true },
+          { text: " better than a " },
+          { text: "<textarea>", code: true },
         ],
       },
       {
@@ -33,14 +35,8 @@ function App() {
         caption: "Cute Puppy",
       },
       {
-        id: uuid(),
-        type: "rich-text",
-        children: [
-          {
-            type: "paragraph",
-            children: [{ text: "dfjlsdfsdf" }],
-          },
-        ],
+        type: "paragraph",
+        children: [{ text: "dfjlsdfsdf" }],
       },
     ],
   });

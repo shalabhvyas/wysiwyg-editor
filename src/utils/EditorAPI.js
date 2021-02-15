@@ -3,6 +3,7 @@ import { Editor } from "slate";
 import Image from "../components/Image.react";
 import React from "react";
 import StyledText from "../components/StyledText.react";
+import isHotkey from "is-hotkey";
 
 export default class EditorAPI {
   _instance;
@@ -29,6 +30,13 @@ export default class EditorAPI {
   getActiveStyles() {
     return new Set(Object.keys(Editor.marks(this._instance) ?? {}));
   }
+
+  getBlockType() {
+    const e = Editor;
+    return "paragraph";
+  }
+
+  toggleBlockType() {}
 }
 
 export function renderElement(props) {
@@ -36,11 +44,23 @@ export function renderElement(props) {
   switch (element.type) {
     case "image":
       return <Image {...props} />;
-    case "rich-text":
+    case "paragraph":
       return (
-        <div {...attributes} content-editable={"true"}>
+        <p {...attributes} content-editable={"true"}>
           {children}
-        </div>
+        </p>
+      );
+    case "h1":
+      return (
+        <h1 {...attributes} content-editable={"true"}>
+          {children}
+        </h1>
+      );
+    case "h2":
+      return (
+        <h2 {...attributes} content-editable={"true"}>
+          {children}
+        </h2>
       );
     default:
       return <DefaultElement {...props} />;
@@ -50,3 +70,24 @@ export function renderElement(props) {
 export function renderLeaf(props) {
   return <StyledText {...props} />;
 }
+
+export const KeyBindings = {
+  onKeyDown: (api, event) => {
+    if (isHotkey("mod+b", event)) {
+      api.toggleStyle("bold");
+      return;
+    }
+    if (isHotkey("mod+i", event)) {
+      api.toggleStyle("italic");
+      return;
+    }
+    if (isHotkey("mod+c", event)) {
+      api.toggleStyle("code");
+      return;
+    }
+    if (isHotkey("mod+u", event)) {
+      api.toggleStyle("underline");
+      return;
+    }
+  },
+};

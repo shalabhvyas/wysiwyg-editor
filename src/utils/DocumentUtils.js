@@ -1,7 +1,9 @@
 export function convertToSlate(doc) {
   return doc.content.map((node) => {
     switch (node.type) {
-      case "rich-text":
+      case "paragraph":
+      case "h1":
+      case "h2":
         return node;
       case "image":
         return {
@@ -19,11 +21,13 @@ export function convertFromSlate(nodes) {
   return {
     content: nodes.map((node: Node) => {
       switch (node.type) {
-        case "rich-text":
+        case "paragraph":
+        case "h1":
+        case "h2":
           return {
             id: node.id,
-            type: "rich-text",
-            children: node.children != null ? Array.from(node.children) : [],
+            type: node.type,
+            children: node.children,
           };
         case "image":
           return {
