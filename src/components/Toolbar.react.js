@@ -1,39 +1,37 @@
 import "./Toolbar.css";
 
+import { useCallback, useContext } from "react";
+
 import { EditorAPIContext } from "./Editor.react";
 import classNames from "classnames";
-import { useContext } from "react";
 
 export default function Toolbar() {
+  const api = useContext(EditorAPIContext);
+  const onBlockTypeChange = useCallback(
+    (event) => {
+      const targetType = event.target.value;
+      if (targetType === "multiple") {
+        return;
+      }
+      api.toggleBlockType(targetType);
+    },
+    [api]
+  );
   return (
     <div>
       {["bold", "italic", "underline", "code"].map((style) => (
         <ToolBarStyleButton key={style} style={style} label={style} />
       ))}
-      {["h1", "h2", "p"].map((blockType) => (
-        <ToolBarBlockButton
-          key={blockType}
-          blockType={blockType}
-          label={blockType}
-        />
-      ))}
+      <select
+        id="block-type"
+        onChange={onBlockTypeChange}
+        value={api.getBlockType() ?? "paragraph"}
+      >
+        {["h1", "h2", "paragraph", "multiple"].map((blockType) => (
+          <option value={blockType} key={blockType} label={blockType} />
+        ))}
+      </select>
     </div>
-  );
-}
-
-function ToolBarBlockButton({ blockType, label }) {
-  const api = useContext(EditorAPIContext);
-
-  return (
-    <ToolBarButton
-      role="button"
-      onMouseDown={(event) => {
-        event.preventDefault();
-        api.toggleBlockType(blockType);
-      }}
-      isActive={api.getBlockType() === blockType}
-      label={label}
-    />
   );
 }
 

@@ -10,11 +10,11 @@ function App() {
     content: [
       {
         type: "h1",
-        text: "Heading H1",
+        children: [{ text: "Heading H1" }],
       },
       {
         type: "h2",
-        text: "Heading H2",
+        children: [{ text: "Heading H2" }],
       },
       {
         type: "paragraph",

@@ -3,8 +3,8 @@ import { Editor } from "slate";
 import Image from "../components/Image.react";
 import React from "react";
 import StyledText from "../components/StyledText.react";
+import { Transforms } from "slate";
 import isHotkey from "is-hotkey";
-
 export default class EditorAPI {
   _instance;
 
@@ -32,11 +32,59 @@ export default class EditorAPI {
   }
 
   getBlockType() {
-    const e = Editor;
-    return "paragraph";
+    let selectedBlockRange = this.getSelectedBlockRange();
+    if (selectedBlockRange == null) {
+      return null;
+    }
+
+    let [startIndex, endIndex] = selectedBlockRange;
+    let currentBlockType = null;
+    while (startIndex <= endIndex) {
+      // depth = 1 because node is a top level block element
+      const node = this.getBlockNode([startIndex]);
+      if (currentBlockType == null) {
+        currentBlockType = node.type;
+      } else if (currentBlockType !== node.type) {
+        return "multiple";
+      }
+      startIndex++;
+    }
+
+    return currentBlockType;
   }
 
-  toggleBlockType() {}
+  getBlockNode(path) {
+    if (path.length !== 1) {
+      throw Error("Expected single-element array path for block node");
+    }
+    return Editor.node(this._instance, path)[0] ?? null;
+  }
+
+  getSelectedBlockRange() {
+    if (this._instance.selection == null) {
+      return null;
+    }
+    const anchorBlockIndex = this._instance.selection.anchor.path[0];
+    // gotcha below when the focus path is [3,0,0] - start of the focus block.
+    const focusBlockIndex = this._instance.selection.focus.path[0];
+
+    let startIndex, endIndex;
+    if (anchorBlockIndex <= focusBlockIndex) {
+      startIndex = anchorBlockIndex;
+      endIndex = focusBlockIndex;
+    } else {
+      startIndex = focusBlockIndex;
+      endIndex = anchorBlockIndex;
+    }
+
+    return [startIndex, endIndex];
+  }
+
+  toggleBlockType(blockType) {
+    const currentBlockType = this.getBlockType();
+    const changeTo = currentBlockType === blockType ? "paragraph" : blockType;
+    Transforms.setNodes(this._instance, { type: changeTo });
+  }
 }
 
 export function renderElement(props) {
