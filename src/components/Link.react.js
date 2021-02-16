@@ -1,31 +1,20 @@
 import "./Link.css";
 
-import { useCallback, useContext, useEffect, useRef } from "react";
+import { useCallback, useContext } from "react";
 
 import { EditorDispatchContext } from "./Editor.react";
 
 export default function Link({ element, attributes, children }) {
-  const ref = useRef(null);
   const dispatch = useContext(EditorDispatchContext);
   const toggleEditMode = useCallback(
     (event) => {
-      dispatch({ type: "toggle_selection_menu", selectionRef: ref.current });
+      dispatch({ type: "toggle_selection_menu" });
     },
     [dispatch]
   );
 
-  useEffect(() => {
-    console.log("ref in useEffect:", ref);
-  }, []);
-
   return (
-    <a
-      href={element.url}
-      onMouseDown={toggleEditMode}
-      ref={ref}
-      style={{ position: "relative" }}
-      {...attributes}
-    >
+    <a href={element.url} onMouseUp={toggleEditMode} {...attributes}>
       {children}
       {/* Write a point about why se can't have custom selection menu like below because of Slate's GH issue */}
       {/* <span

@@ -5,7 +5,7 @@ import EditorAPI, { renderElement, renderLeaf } from "../utils/EditorAPI";
 import { convertFromSlate, convertToSlate } from "../utils/DocumentUtils";
 import { useCallback, useMemo, useReducer } from "react";
 
-import EditorSelectionMenu from "./EditorSelectionMenu.react";
+// import EditorSelectionMenu from "./EditorSelectionMenu.react";
 import { KeyBindings } from "../utils/EditorAPI";
 import React from "react";
 import Toolbar from "./Toolbar.react";
@@ -19,7 +19,7 @@ function reduce(state, action) {
     case "toggle_selection_menu":
       return {
         ...state,
-        selectionRef: state.selectionRef == null ? action.selectionRef : null,
+        shouldShowSelection: !state.shouldShowSelection,
       };
     default:
       return state;
@@ -31,13 +31,6 @@ function Editor({ document, onChange }): JSX.Element {
   const editorAPI = useMemo(() => new EditorAPI(slateEditor), [slateEditor]);
   const [editorState, dispatch] = useReducer(reduce, { selectionRef: null });
 
-  const onContentChange = useCallback(
-    (content: Node[]) => {
-      onChange(convertFromSlate(content));
-    },
-    [onChange]
-  );
-
   const onKeyDown = useCallback(
     (event) => KeyBindings.onKeyDown(editorAPI, event),
     [editorAPI]
@@ -46,14 +39,8 @@ function Editor({ document, onChange }): JSX.Element {
   return (
     <EditorDispatchContext.Provider value={dispatch}>
       <EditorAPIContext.Provider value={editorAPI}>
-        {editorState.selectionRef != null ? (
-          <EditorSelectionMenu context={editorState.selectionRef} />
-        ) : null}
-        <Slate
-          editor={slateEditor}
-          value={convertToSlate(document)}
-          onChange={onContentChange}
-        >
+        {/* {editorState.shouldShowSelection ? <EditorSelectionMenu /> : null} */}
+        <Slate editor={slateEditor} value={document} onChange={onChange}>
           <Toolbar />
           <div className="editor">
             <Editable

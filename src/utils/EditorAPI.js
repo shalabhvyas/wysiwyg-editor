@@ -6,6 +6,7 @@ import React from "react";
 import StyledText from "../components/StyledText.react";
 import { Transforms } from "slate";
 import isHotkey from "is-hotkey";
+
 export default class EditorAPI {
   _instance;
 
@@ -21,13 +22,9 @@ export default class EditorAPI {
     this._instance.isInline = (element) => element.type === "link";
   }
 
-  toggleStyle(style) {
-    const activeStyles = this.getActiveStyles();
-    if (activeStyles.has(style)) {
-      Editor.removeMark(this._instance, style);
-    } else {
-      Editor.addMark(this._instance, style, true);
-    }
+  getNode(path) {
+    const entry = Editor.node(this._instance, path);
+    return entry;
   }
 
   getActiveStyles() {
@@ -35,6 +32,7 @@ export default class EditorAPI {
   }
 
   getBlockType() {
+    // instead do Editor.nodes with match set to isBlock.
     let selectedBlockRange = this.getSelectedBlockRange();
     if (selectedBlockRange == null) {
       return null;
@@ -60,7 +58,7 @@ export default class EditorAPI {
     if (path.length !== 1) {
       throw Error("Expected single-element array path for block node");
     }
-    return Editor.node(this._instance, path)[0] ?? null;
+    return this.getNode(path)[0] ?? null;
   }
 
   getSelectedBlockRange() {
@@ -83,10 +81,27 @@ export default class EditorAPI {
     return [startIndex, endIndex];
   }
 
-  getLinkTextAtSelection() {
-    const i = this._instance;
-    const e = Editor;
-    const x = 3;
+  getSelection() {
+    return this._instance.selection;
+  }
+
+  getDOMNode(node) {
+    // return findDOMNode(node);
+    return null;
+  }
+
+  getParent(path) {
+    // mention that one can also use Node closest to local the node.
+    return Editor.parent(this._instance, path);
+  }
+
+  toggleStyle(style) {
+    const activeStyles = this.getActiveStyles();
+    if (activeStyles.has(style)) {
+      Editor.removeMark(this._instance, style);
+    } else {
+      Editor.addMark(this._instance, style, true);
+    }
   }
 
   toggleBlockType(blockType) {
