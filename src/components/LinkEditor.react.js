@@ -12,10 +12,5 @@ export default function LinkEditor({ text, link }) {
   );
   const editorInstance = useContext(EditorAPIContext);
   const textAtSelection = editorInstance.getLinkTextAtSelection();
-  return (
-    <span className="link-editor">
-      Link:
-      {/* <input type="text" value={linkText} onChange={onLinkTextChange} /> */}
-    </span>
-  );
+  return <span className="link-editor">Link:</span>;
 }

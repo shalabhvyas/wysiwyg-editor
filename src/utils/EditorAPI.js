@@ -8,11 +8,10 @@ import { Transforms } from "slate";
 import isHotkey from "is-hotkey";
 export default class EditorAPI {
   _instance;
-  _refForContextMenu;
 
   constructor(instance) {
     this._instance = instance;
-    this._refForContextMenu = null;
+
     // post initialization config.
     const { isVoid } = this._instance;
     this._instance.isVoid = (element) => {
@@ -20,22 +19,6 @@ export default class EditorAPI {
     };
 
     this._instance.isInline = (element) => element.type === "link";
-  }
-
-  getRefForContextMenu() {
-    return this._refForContextMenu;
-  }
-
-  isContextMenuShown() {
-    return this._refForContextMenu != null;
-  }
-
-  showContextMenu(ref) {
-    this._refForContextMenu = ref;
-  }
-
-  closeContextMenu() {
-    this._refForContextMenu = null;
   }
 
   toggleStyle(style) {
