@@ -22,6 +22,14 @@ function App() {
           { text: "A line of text in a paragraph." },
           { text: " Rich", bold: true },
           { text: " text, " },
+          {
+            type: "link",
+            url: "https://www.google.com",
+            children: [
+              { text: "Text inside link." },
+              { text: "Bold text inside link." },
+            ],
+          },
           { text: "much", italic: true },
           { text: " better than a " },
           { text: "<textarea>", code: true },

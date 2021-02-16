@@ -5,6 +5,7 @@ import EditorAPI, { renderElement, renderLeaf } from "../utils/EditorAPI";
 import { convertFromSlate, convertToSlate } from "../utils/DocumentUtils";
 import { useCallback, useMemo } from "react";
 
+import EditorContextMenu from "./EditorContextMenu.react";
 import { KeyBindings } from "../utils/EditorAPI";
 import React from "react";
 import Toolbar from "./Toolbar.react";
@@ -15,6 +16,7 @@ export const EditorAPIContext = React.createContext(null);
 function Editor({ document, onChange }): JSX.Element {
   const slateEditor = useMemo(() => withReact(createEditor()), []);
   const editorAPI = useMemo(() => new EditorAPI(slateEditor), [slateEditor]);
+  const refForContextMenu = editorAPI.getRefForContextMenu();
 
   const onContentChange = useCallback(
     (content: Node[]) => {
@@ -30,6 +32,9 @@ function Editor({ document, onChange }): JSX.Element {
 
   return (
     <EditorAPIContext.Provider value={editorAPI}>
+      {refForContextMenu != null ? (
+        <EditorContextMenu context={refForContextMenu} />
+      ) : null}
       <Slate
         editor={slateEditor}
         value={convertToSlate(document)}

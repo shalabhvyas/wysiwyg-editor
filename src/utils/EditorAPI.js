@@ -1,21 +1,41 @@
 import { DefaultElement } from "slate-react";
 import { Editor } from "slate";
 import Image from "../components/Image.react";
+import Link from "../components/Link.react";
 import React from "react";
 import StyledText from "../components/StyledText.react";
 import { Transforms } from "slate";
 import isHotkey from "is-hotkey";
 export default class EditorAPI {
   _instance;
+  _refForContextMenu;
 
   constructor(instance) {
     this._instance = instance;
-
+    this._refForContextMenu = null;
     // post initialization config.
     const { isVoid } = this._instance;
     this._instance.isVoid = (element) => {
       return element.type === "image" ? true : isVoid(element);
     };
+
+    this._instance.isInline = (element) => element.type === "link";
+  }
+
+  getRefForContextMenu() {
+    return this._refForContextMenu;
+  }
+
+  isContextMenuShown() {
+    return this._refForContextMenu != null;
+  }
+
+  showContextMenu(ref) {
+    this._refForContextMenu = ref;
+  }
+
+  closeContextMenu() {
+    this._refForContextMenu = null;
   }
 
   toggleStyle(style) {
@@ -80,6 +100,12 @@ export default class EditorAPI {
     return [startIndex, endIndex];
   }
 
+  getLinkTextAtSelection() {
+    const i = this._instance;
+    const e = Editor;
+    const x = 3;
+  }
+
   toggleBlockType(blockType) {
     const currentBlockType = this.getBlockType();
     const changeTo = currentBlockType === blockType ? "paragraph" : blockType;
@@ -110,6 +136,8 @@ export function renderElement(props) {
           {children}
         </h2>
       );
+    case "link":
+      return <Link {...props} />;
     default:
       return <DefaultElement {...props} />;
   }

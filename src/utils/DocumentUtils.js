@@ -4,6 +4,7 @@ export function convertToSlate(doc) {
       case "paragraph":
       case "h1":
       case "h2":
+      case "link":
         return node;
       case "image":
         return {
@@ -33,8 +34,13 @@ export function convertFromSlate(nodes) {
           return {
             id: node.id,
             type: "image",
-            url: String(node.url),
-            caption: String(node.caption),
+            url: node.url,
+            caption: node.caption,
+          };
+        case "link":
+          return {
+            type: "link",
+            url: node.url,
           };
         default:
           throw new Error(`Unhandled node type: ${node.type}`);
