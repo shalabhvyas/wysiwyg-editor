@@ -24,7 +24,7 @@ export default function EditorSelectionMenu(context) {
     const [parent, parentPath] = editorAPI.getParent(selection);
     if (selectionMenuSupportedNodeTypes.includes(parent?.type)) {
       nodeType = parent.type;
-      domNode = editorAPI.getDOMNode(currentNode);
+      domNode = editorAPI.getDOMNode(parent);
       path = parentPath;
     }
   }

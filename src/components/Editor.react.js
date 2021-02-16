@@ -2,10 +2,9 @@ import "./Editor.css";
 
 import { Editable, Slate, withReact } from "slate-react";
 import EditorAPI, { renderElement, renderLeaf } from "../utils/EditorAPI";
-import { convertFromSlate, convertToSlate } from "../utils/DocumentUtils";
 import { useCallback, useMemo, useReducer } from "react";
 
-// import EditorSelectionMenu from "./EditorSelectionMenu.react";
+import EditorSelectionMenu from "./EditorSelectionMenu.react";
 import { KeyBindings } from "../utils/EditorAPI";
 import React from "react";
 import Toolbar from "./Toolbar.react";
@@ -39,7 +38,7 @@ function Editor({ document, onChange }): JSX.Element {
   return (
     <EditorDispatchContext.Provider value={dispatch}>
       <EditorAPIContext.Provider value={editorAPI}>
-        {/* {editorState.shouldShowSelection ? <EditorSelectionMenu /> : null} */}
+        {editorState.shouldShowSelection ? <EditorSelectionMenu /> : null}
         <Slate editor={slateEditor} value={document} onChange={onChange}>
           <Toolbar />
           <div className="editor">

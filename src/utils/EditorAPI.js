@@ -3,6 +3,7 @@ import { Editor } from "slate";
 import Image from "../components/Image.react";
 import Link from "../components/Link.react";
 import React from "react";
+import { ReactEditor } from "slate-react";
 import StyledText from "../components/StyledText.react";
 import { Transforms } from "slate";
 import isHotkey from "is-hotkey";
@@ -87,7 +88,7 @@ export default class EditorAPI {
 
   getDOMNode(node) {
     // return findDOMNode(node);
-    return null;
+    return ReactEditor.toDOMNode(this._instance, node);
   }
 
   getParent(path) {

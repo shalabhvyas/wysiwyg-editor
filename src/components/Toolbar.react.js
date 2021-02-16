@@ -31,6 +31,7 @@ export default function Toolbar() {
           <option value={blockType} key={blockType} label={blockType} />
         ))}
       </select>
+      <ToolBarButton role="button" isActive={false} label={"Link"} />
     </div>
   );
 }
