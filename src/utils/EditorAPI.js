@@ -33,7 +33,13 @@ export default class EditorAPI {
   }
 
   getBlockType() {
-    // instead do Editor.nodes with match set to isBlock.
+    // Change the logic below to basically find
+    // - the closest block parent of the anchor
+    // - siblings of anchor's block parent.
+    // - all top level blocks b/w top level blocks of anchor and focus
+    // - siblings of focus's closest block parent
+    // - focus's closest block parent itself
+
     let selectedBlockRange = this.getSelectedBlockRange();
     if (selectedBlockRange == null) {
       return null;
