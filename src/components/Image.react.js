@@ -11,6 +11,8 @@ const Image = ({ attributes, children, element }) => {
           alt={element.caption}
           className={"image"}
         />
+        {/* you can make the caption editable using an `input` element since the 
+        parent itself has content editable false. */}
         <div style={{ textAlign: "center" }}>{element.caption}</div>
       </div>
       {children}

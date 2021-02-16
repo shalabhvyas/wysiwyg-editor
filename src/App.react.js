@@ -27,6 +27,7 @@ function App() {
           children: [
             { text: "Text inside link." },
             { text: "Bold text inside link." },
+            { type: "selection-menu", children: [{ text: "selection menu" }] },
           ],
         },
         { text: "much", italic: true },

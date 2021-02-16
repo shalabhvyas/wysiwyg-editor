@@ -14,7 +14,12 @@ export default function Link({ element, attributes, children }) {
   );
 
   return (
-    <a href={element.url} onMouseUp={toggleEditMode} {...attributes}>
+    <a
+      href={element.url}
+      onMouseUp={toggleEditMode}
+      {...attributes}
+      className={"link"}
+    >
       {children}
       {/* Write a point about why se can't have custom selection menu like below because of Slate's GH issue */}
       {/* <span

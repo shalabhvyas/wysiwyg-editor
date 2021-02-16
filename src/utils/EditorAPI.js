@@ -20,7 +20,8 @@ export default class EditorAPI {
       return element.type === "image" ? true : isVoid(element);
     };
 
-    this._instance.isInline = (element) => element.type === "link";
+    this._instance.isInline = (element) =>
+      ["link", "selection-menu"].includes(element.type);
   }
 
   getNode(path) {
@@ -39,6 +40,7 @@ export default class EditorAPI {
     // - all top level blocks b/w top level blocks of anchor and focus
     // - siblings of focus's closest block parent
     // - focus's closest block parent itself
+    // - skip any void nodes that may have come in here.
 
     let selectedBlockRange = this.getSelectedBlockRange();
     if (selectedBlockRange == null) {
@@ -143,6 +145,23 @@ export function renderElement(props) {
       );
     case "link":
       return <Link {...props} />;
+    case "selection-menu":
+      return (
+        <span
+          style={{
+            position: "absolute",
+            top: "100%",
+            left: 0,
+            border: "1px solid #000",
+            padding: 8,
+          }}
+          {...attributes}
+          contentEditable={false}
+        >
+          {"Selection-Menu"}
+          <input type="text" value={"some input"} onChange={() => {}} />
+        </span>
+      );
     default:
       return <DefaultElement {...props} />;
   }
