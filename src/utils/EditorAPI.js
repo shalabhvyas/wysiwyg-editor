@@ -1,4 +1,4 @@
-import { Editor, Element } from "slate";
+import { Editor, Element, Node } from "slate";
 import { Range, Transforms } from "slate";
 
 import { DefaultElement } from "slate-react";
@@ -154,7 +154,21 @@ export default class EditorAPI {
           ],
         });
       } else {
-        Transforms.wrapNodes(this._instance, { type: "link", url: "" });
+        const editor = this._instance;
+        Editor.withoutNormalizing(editor, () => {
+          Transforms.wrapNodes(
+            editor,
+            { type: "link", url: "", children: [] },
+            { split: true }
+          );
+
+          const newlyInsertedLinkEntry = Editor.above(editor, {
+            match: (n) => n.type === "link",
+          });
+
+          // append the link editor so it pops up and user
+          appendLinkEditorToLinkNode(editor, newlyInsertedLinkEntry);
+        });
       }
     }
   }
@@ -216,3 +230,29 @@ export const KeyBindings = {
     }
   },
 };
+
+export function appendLinkEditorToLinkNode(editor, linkNodeEntry) {
+  if (linkNodeEntry == null) return;
+
+  const [linkNode, path] = linkNodeEntry;
+
+  const hasLinkEditorOpen = linkNode.children.some(
+    (n) => n.type === "link-editor"
+  );
+
+  if (hasLinkEditorOpen) {
+    return;
+  }
+
+  const linkEditorPath = [...path, linkNode.children.length];
+  Transforms.insertNodes(
+    editor,
+    {
+      type: "link-editor",
+      url: linkNode.url,
+      linkText: Node.string(linkNode),
+      children: [{ text: "" }],
+    },
+    { at: linkEditorPath }
+  );
+}

@@ -1,7 +1,7 @@
 import "./Link.css";
 
-import { Editor, Node, Transforms } from "slate";
-
+import { Editor } from "slate";
+import { appendLinkEditorToLinkNode } from "../utils/EditorAPI";
 import { useCallback } from "react";
 import { useEditor } from "slate-react";
 
@@ -13,31 +13,9 @@ export default function Link({ element, attributes, children }) {
         match: (n) => n.type === "link",
       });
 
-      if (linkNodeEntry == null) return;
-
-      const [linkNode, path] = linkNodeEntry;
-
-      const hasLinkEditorOpen = linkNode.children.some(
-        (n) => n.type === "link-editor"
-      );
-
-      if (hasLinkEditorOpen) {
-        return;
-      }
-
-      const linkEditorPath = [...path, linkNode.children.length];
-      Transforms.insertNodes(
-        editor,
-        {
-          type: "link-editor",
-          url: element.url,
-          linkText: Node.string(linkNode),
-          children: [{ text: "" }],
-        },
-        { at: linkEditorPath }
-      );
+      appendLinkEditorToLinkNode(editor, linkNodeEntry);
     },
-    [editor, element.url]
+    [editor]
   );
 
   return (
