@@ -153,6 +153,8 @@ export default class EditorAPI {
             { text: "" },
           ],
         });
+      } else {
+        Transforms.wrapNodes(this._instance, { type: "link", url: "" });
       }
     }
   }
