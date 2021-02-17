@@ -6,8 +6,8 @@ import { EditorAPIContext } from "./Editor.react";
 import classNames from "classnames";
 
 export default function Toolbar() {
-  console.log("Toolbar re-render");
   const api = useContext(EditorAPIContext);
+
   const onBlockTypeChange = useCallback(
     (event) => {
       const targetType = event.target.value;

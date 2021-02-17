@@ -8,6 +8,7 @@ import { KeyBindings } from "../utils/EditorAPI";
 import React from "react";
 import Toolbar from "./Toolbar.react";
 import { createEditor } from "slate";
+import { useState } from "react";
 
 export const EditorAPIContext = React.createContext(null);
 export const EditorDispatchContext = React.createContext(null);
@@ -28,17 +29,25 @@ function Editor({ document, onChange }): JSX.Element {
   const slateEditor = useMemo(() => withReact(createEditor()), []);
   const editorAPI = useMemo(() => new EditorAPI(slateEditor), [slateEditor]);
   const [_editorState, dispatch] = useReducer(reduce, { selectionRef: null });
-
+  const [selection, setSelection] = useState(editorAPI.getSelection());
   const onKeyDown = useCallback(
     (event) => KeyBindings.onKeyDown(editorAPI, event),
     [editorAPI]
   );
 
+  const onChangeLocal = useCallback(
+    (doc) => {
+      onChange(doc);
+      setSelection(editorAPI.getSelection());
+    },
+    [onChange, setSelection, editorAPI]
+  );
+
   return (
     <EditorDispatchContext.Provider value={dispatch}>
       <EditorAPIContext.Provider value={editorAPI}>
-        <Slate editor={slateEditor} value={document} onChange={onChange}>
-          <Toolbar />
+        <Slate editor={slateEditor} value={document} onChange={onChangeLocal}>
+          <Toolbar selection={selection} />
           <div className="editor">
             <Editable
               renderElement={renderElement}
