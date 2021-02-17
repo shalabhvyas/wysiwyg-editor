@@ -10,3 +10,7 @@
 .is-active {
   background: blue;
 }
+
+.image-upload-input {
+  display: none;
+}
