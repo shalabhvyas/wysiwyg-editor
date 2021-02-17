@@ -2,6 +2,7 @@ import { DefaultElement } from "slate-react";
 import { Editor } from "slate";
 import Image from "../components/Image.react";
 import Link from "../components/Link.react";
+import LinkEditor from "../components/LinkEditor.react";
 import React from "react";
 import { ReactEditor } from "slate-react";
 import StyledText from "../components/StyledText.react";
@@ -17,11 +18,11 @@ export default class EditorAPI {
     // post initialization config.
     const { isVoid } = this._instance;
     this._instance.isVoid = (element) => {
-      return element.type === "image" ? true : isVoid(element);
+      return ["image", "link-editor"].includes(element.type) || isVoid(element);
     };
 
     this._instance.isInline = (element) =>
-      ["link", "selection-menu"].includes(element.type);
+      ["link", "link-editor"].includes(element.type);
   }
 
   getNode(path) {
@@ -144,24 +145,9 @@ export function renderElement(props) {
         </h2>
       );
     case "link":
-      return <Link {...props} />;
-    case "selection-menu":
-      return (
-        <span
-          style={{
-            position: "absolute",
-            top: "100%",
-            left: 0,
-            border: "1px solid #000",
-            padding: 8,
-          }}
-          {...attributes}
-          contentEditable={false}
-        >
-          {"Selection-Menu"}
-          <input type="text" value={"some input"} onChange={() => {}} />
-        </span>
-      );
+      return <Link {...props} url={element.url} />;
+    case "link-editor":
+      return <LinkEditor {...props} />;
     default:
       return <DefaultElement {...props} />;
   }
@@ -191,3 +177,16 @@ export const KeyBindings = {
     }
   },
 };
+
+export function closestMatchingBySelection(editor, selection, filters) {
+  return closestMatching(editor, Editor.node(selection), filters);
+}
+
+export function closestMatching(editor, node, filters) {
+  const type = filters.type;
+  if (node == null) {
+    return null;
+  }
+  if (type == null || node.type === type) return node;
+  return closestMatching(editor, Node.parent(node), filters);
+}

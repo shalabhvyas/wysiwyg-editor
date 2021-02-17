@@ -1,40 +1,53 @@
 import "./Link.css";
 
-import { useCallback, useContext } from "react";
+import { Editor, Node, Transforms } from "slate";
 
-import { EditorDispatchContext } from "./Editor.react";
+import { useCallback } from "react";
+import { useEditor } from "slate-react";
 
 export default function Link({ element, attributes, children }) {
-  const dispatch = useContext(EditorDispatchContext);
+  const editor = useEditor();
   const toggleEditMode = useCallback(
     (event) => {
-      dispatch({ type: "toggle_selection_menu" });
+      const linkNodeEntry = Editor.above(editor, {
+        match: (n) => n.type === "link",
+      });
+
+      if (linkNodeEntry == null) return;
+
+      const [linkNode, path] = linkNodeEntry;
+
+      const hasLinkEditorOpen = linkNode.children.some(
+        (n) => n.type === "link-editor"
+      );
+
+      if (hasLinkEditorOpen) {
+        return;
+      }
+
+      const linkEditorPath = [...path, linkNode.children.length];
+      Transforms.insertNodes(
+        editor,
+        {
+          type: "link-editor",
+          url: element.url,
+          linkText: Node.string(linkNode),
+          children: [{ text: "" }],
+        },
+        { at: linkEditorPath }
+      );
     },
-    [dispatch]
+    [editor, element.url]
   );
 
   return (
-    <a
+    <span
       href={element.url}
       onMouseUp={toggleEditMode}
       {...attributes}
       className={"link"}
     >
       {children}
-      {/* Write a point about why se can't have custom selection menu like below because of Slate's GH issue */}
-      {/* <span
-        style={{
-          position: "absolute",
-          top: "100%",
-          left: 0,
-          userSelect: "none",
-        }}
-        content-editable={"false"}
-      >
-        Link:
-        <button></button>
-        <input type="text" value="something" onChange={() => {}} />
-      </span> */}
-    </a>
+    </span>
   );
 }

@@ -26,8 +26,7 @@ function App() {
           url: "https://www.google.com",
           children: [
             { text: "Text inside link." },
-            { text: "Bold text inside link." },
-            { type: "selection-menu", children: [{ text: "selection menu" }] },
+            { text: "Bold text inside link.", bold: true },
           ],
         },
         { text: "much", italic: true },

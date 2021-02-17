@@ -1,6 +1,6 @@
 import "./LinkEditor.css";
 
-import { Editor, Transforms } from "slate";
+import { Editor, Node, Transforms } from "slate";
 import { useCallback, useState } from "react";
 
 import isUrl from "is-url";
@@ -22,14 +22,25 @@ export default function LinkEditor({ attributes, element, children }) {
     [setLinkURL]
   );
 
-  const onApply = useCallback(() => {
-    const [_, path] = Editor.above(editor, {
-      match: (n) => n.type === "link",
-    });
-    // update URL
-    Transforms.setNodes(editor, { url: linkURL }, { at: path });
-    // remove text
-  }, [editor, linkText, linkURL]);
+  const onApply = useCallback(
+    (event) => {
+      const [linkNode, path] = Editor.above(editor, {
+        match: (n) => n.type === "link",
+      });
+      // update URL
+      Transforms.setNodes(editor, { url: linkURL }, { at: path });
+
+      // remove existing text
+      const allTexts = Node.texts(linkNode);
+      for (const text of allTexts) {
+        Transforms.removeNodes(editor, { at: text[1] });
+      }
+
+      event.stopPropagation();
+      // remove text
+    },
+    [editor, linkText, linkURL]
+  );
   // get text for the node at path and show that here for editing.
   //   const editorInstance = useContext(EditorAPIContext);
   return (
@@ -47,7 +58,7 @@ export default function LinkEditor({ attributes, element, children }) {
         onChange={onLinkURLChange}
       />
       {/* Check if URL is valid */}
-      <button disabled={!isUrl(linkURL)} onClick={onApply}>
+      <button disabled={false && !isUrl(linkURL)} onClick={onApply}>
         Apply
       </button>
       {children}
