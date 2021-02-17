@@ -4,7 +4,6 @@ import { Editable, Slate, withReact } from "slate-react";
 import EditorAPI, { renderElement, renderLeaf } from "../utils/EditorAPI";
 import { useCallback, useMemo, useReducer } from "react";
 
-import EditorSelectionMenu from "./EditorSelectionMenu.react";
 import { KeyBindings } from "../utils/EditorAPI";
 import React from "react";
 import Toolbar from "./Toolbar.react";
@@ -28,7 +27,7 @@ function reduce(state, action) {
 function Editor({ document, onChange }): JSX.Element {
   const slateEditor = useMemo(() => withReact(createEditor()), []);
   const editorAPI = useMemo(() => new EditorAPI(slateEditor), [slateEditor]);
-  const [editorState, dispatch] = useReducer(reduce, { selectionRef: null });
+  const [_editorState, dispatch] = useReducer(reduce, { selectionRef: null });
 
   const onKeyDown = useCallback(
     (event) => KeyBindings.onKeyDown(editorAPI, event),
@@ -38,7 +37,6 @@ function Editor({ document, onChange }): JSX.Element {
   return (
     <EditorDispatchContext.Provider value={dispatch}>
       <EditorAPIContext.Provider value={editorAPI}>
-        {editorState.shouldShowSelection ? <EditorSelectionMenu /> : null}
         <Slate editor={slateEditor} value={document} onChange={onChange}>
           <Toolbar />
           <div className="editor">

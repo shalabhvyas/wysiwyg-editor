@@ -6,6 +6,7 @@ import { EditorAPIContext } from "./Editor.react";
 import classNames from "classnames";
 
 export default function Toolbar() {
+  console.log("Toolbar re-render");
   const api = useContext(EditorAPIContext);
   const onBlockTypeChange = useCallback(
     (event) => {
@@ -31,7 +32,12 @@ export default function Toolbar() {
           <option value={blockType} key={blockType} label={blockType} />
         ))}
       </select>
-      <ToolBarButton role="button" isActive={false} label={"Link"} />
+      <ToolBarButton
+        role="button"
+        isActive={api.hasActiveLinkAtSelection()}
+        label={"Link"}
+        onMouseDown={() => api.toggleLinkAtSelection()}
+      />
     </div>
   );
 }

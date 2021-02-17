@@ -1,12 +1,13 @@
+import { Editor, Element } from "slate";
+import { Range, Transforms } from "slate";
+
 import { DefaultElement } from "slate-react";
-import { Editor } from "slate";
 import Image from "../components/Image.react";
 import Link from "../components/Link.react";
 import LinkEditor from "../components/LinkEditor.react";
 import React from "react";
 import { ReactEditor } from "slate-react";
 import StyledText from "../components/StyledText.react";
-import { Transforms } from "slate";
 import isHotkey from "is-hotkey";
 
 export default class EditorAPI {
@@ -119,6 +120,42 @@ export default class EditorAPI {
     const changeTo = currentBlockType === blockType ? "paragraph" : blockType;
     Transforms.setNodes(this._instance, { type: changeTo });
   }
+
+  hasActiveLinkAtSelection() {
+    const [result] = Editor.nodes(this._instance, {
+      match: (n) => Element.isElement(n) && n.type === "link",
+    });
+
+    return result != null;
+  }
+
+  toggleLinkAtSelection() {
+    if (this.hasActiveLinkAtSelection()) {
+      Transforms.unwrapNodes(this._instance, {
+        match: (n) => Element.isElement(n) && n.type === "link",
+      });
+    } else {
+      const isSelectionCollapsed =
+        this._instance.selection == null ||
+        Range.isCollapsed(this._instance.selection);
+      if (isSelectionCollapsed) {
+        Transforms.insertNodes(this._instance, {
+          type: "link",
+          url: "",
+          children: [
+            { text: "" },
+            {
+              type: "link-editor",
+              url: "",
+              linkText: "",
+              children: [{ text: "" }],
+            },
+            { text: "" },
+          ],
+        });
+      }
+    }
+  }
 }
 
 export function renderElement(props) {
@@ -177,16 +214,3 @@ export const KeyBindings = {
     }
   },
 };
-
-export function closestMatchingBySelection(editor, selection, filters) {
-  return closestMatching(editor, Editor.node(selection), filters);
-}
-
-export function closestMatching(editor, node, filters) {
-  const type = filters.type;
-  if (node == null) {
-    return null;
-  }
-  if (type == null || node.type === type) return node;
-  return closestMatching(editor, Node.parent(node), filters);
-}

@@ -22,27 +22,64 @@ export default function LinkEditor({ attributes, element, children }) {
     [setLinkURL]
   );
 
+  const linkNodeEntry = Editor.above(editor, {
+    match: (n) => n.type === "link",
+  });
+
   const onApply = useCallback(
     (event) => {
-      const [linkNode, path] = Editor.above(editor, {
-        match: (n) => n.type === "link",
-      });
+      if (linkNodeEntry == null) {
+        return;
+      }
+
+      const [linkNode, path] = linkNodeEntry;
+
+      // Try Editor.withoutNormalizing here to try to batch operations.
       // update URL
       Transforms.setNodes(editor, { url: linkURL }, { at: path });
 
-      // remove existing text
-      const allTexts = Node.texts(linkNode);
-      for (const text of allTexts) {
-        Transforms.removeNodes(editor, { at: text[1] });
+      // remove all text leaves except the last one and the link editor itself.
+      const textChildrenCount = linkNode.children.length - 2;
+      for (let i = 0; i < textChildrenCount; i++) {
+        Transforms.removeNodes(editor, { at: [...path, 0] });
       }
 
+      Transforms.insertNodes(editor, { text: linkText }, { at: [...path, 0] });
+
       event.stopPropagation();
-      // remove text
     },
-    [editor, linkText, linkURL]
+    [editor, linkNodeEntry, linkText, linkURL]
   );
-  // get text for the node at path and show that here for editing.
-  //   const editorInstance = useContext(EditorAPIContext);
+
+  const onClose = useCallback(
+    (event) => {
+      if (linkNodeEntry == null) {
+        return;
+      }
+
+      const [linkNode, path] = linkNodeEntry;
+      // Try Editor.withoutNormalizing here to try to batch operations.
+      const all = [...Node.descendants(linkNode, {})];
+      const selfNodeEntry = all.find(([n, path]) => n.type === "link-editor");
+      Transforms.removeNodes(editor, { at: [...path, ...selfNodeEntry[1]] });
+      Transforms.select(editor, path);
+      event.stopPropagation();
+    },
+    [editor, linkNodeEntry]
+  );
+
+  if (linkNodeEntry == null) {
+    return null;
+  }
+
+  // const onRemove = useCallback(
+  //   (event) => {
+  //     Transforms.unwrapNodes(editor, { match: (n) => n.type === "link" });
+  //     event.stopPropagation();
+  //   },
+  //   [editor]
+  // );
+
   return (
     <span className={"link-editor"} contentEditable={false} {...attributes}>
       <input
@@ -58,9 +95,11 @@ export default function LinkEditor({ attributes, element, children }) {
         onChange={onLinkURLChange}
       />
       {/* Check if URL is valid */}
-      <button disabled={false && !isUrl(linkURL)} onClick={onApply}>
+      <button disabled={!isUrl(linkURL)} onClick={onApply}>
         Apply
       </button>
+      <button onClick={onClose}>Close</button>
+      {/* <button onClick={onRemove}>Remove</button> */}
       {children}
     </span>
   );

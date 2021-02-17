@@ -41,13 +41,13 @@ export default function Link({ element, attributes, children }) {
   );
 
   return (
-    <span
+    <a
       href={element.url}
       onMouseUp={toggleEditMode}
       {...attributes}
       className={"link"}
     >
       {children}
-    </span>
+    </a>
   );
 }
