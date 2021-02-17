@@ -1,8 +1,16 @@
 .image-container {
-  margin: 20px 0;
+  margin: 20px auto;
   text-align: center;
 }
 
 .image {
-  width: 100%;
+  display: block;
+  margin: 0 auto;
+}
+
+.image-caption-input,
+.image-caption-read-mode {
+  display: block;
+  margin: 0 auto;
+  margin-top: 8px;
 }
