@@ -3,6 +3,10 @@
   text-align: center;
 }
 
+.is-selected img {
+  box-shadow: 0 0 0 3px #b4d5ff;
+}
+
 .image {
   display: block;
   margin: 0 auto;
