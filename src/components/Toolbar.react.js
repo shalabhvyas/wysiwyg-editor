@@ -13,8 +13,6 @@ export default function Toolbar({ selection, previousSelection }) {
   const editor = useEditor();
   const api = useContext(EditorAPIContext);
 
-  console.log("Selection:", JSON.stringify(selection));
-
   const onBlockTypeChange = useCallback(
     (event) => {
       const targetType = event.target.value;

@@ -13,6 +13,5 @@ export default function useSelection(editor) {
   useEffect(() => {
     previousSelection.current = selection;
   });
-
   return [previousSelection.current, selection, setSelectionOptimized];
 }

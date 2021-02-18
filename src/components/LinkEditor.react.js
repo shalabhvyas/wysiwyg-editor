@@ -1,106 +1,70 @@
 import "./LinkEditor.css";
 
-import { Editor, Node, Transforms } from "slate";
-import { useCallback, useState } from "react";
+import { Editor, Transforms } from "slate";
+import { ReactEditor, useEditor } from "slate-react";
+import { useCallback, useEffect, useRef, useState } from "react";
 
 import isUrl from "is-url";
-import { useEditor } from "slate-react";
 
-export default function LinkEditor({ attributes, element, children }) {
+export default function LinkEditor({ editorOffsets }) {
+  const linkEditorRef = useRef(null);
   const editor = useEditor();
-  const [linkText, setLinkText] = useState(element.linkText);
-  const onLinkTextChange = useCallback(
-    (event) => {
-      setLinkText(event.target.value);
-    },
-    [setLinkText]
-  );
+  const [node, path] = Editor.above(editor, {
+    match: (n) => n.type === "link",
+  });
 
-  const [linkURL, setLinkURL] = useState(element.url);
+  const [linkURL, setLinkURL] = useState(node.url);
   const onLinkURLChange = useCallback(
     (event) => setLinkURL(event.target.value),
     [setLinkURL]
   );
 
-  const linkNodeEntry = Editor.above(editor, {
-    match: (n) => n.type === "link",
-  });
-
   const onApply = useCallback(
     (event) => {
-      if (linkNodeEntry == null) {
-        return;
-      }
-
-      const [linkNode, path] = linkNodeEntry;
-
-      // Try Editor.withoutNormalizing here to try to batch operations.
-      // update URL
       Transforms.setNodes(editor, { url: linkURL }, { at: path });
-
-      // remove all text leaves except the last one and the link editor itself.
-      const textChildrenCount = linkNode.children.length - 2;
-      for (let i = 0; i < textChildrenCount; i++) {
-        Transforms.removeNodes(editor, { at: [...path, 0] });
-      }
-
-      Transforms.insertNodes(editor, { text: linkText }, { at: [...path, 0] });
-
-      event.stopPropagation();
     },
-    [editor, linkNodeEntry, linkText, linkURL]
+    [editor, linkURL, path]
   );
 
-  const onClose = useCallback(
-    (event) => {
-      if (linkNodeEntry == null) {
-        return;
-      }
+  // Explain why this needs to be in a `useEffect` since otherwise when adding
+  // a new link DOMNode for the link might not have rendered yet and `ReactEditor.toDOMNode`
+  // throws an error.
+  useEffect(() => {
+    const editorEl = linkEditorRef.current;
+    if (editorEl == null) {
+      return;
+    }
 
-      const [linkNode, path] = linkNodeEntry;
-      // Try Editor.withoutNormalizing here to try to batch operations.
-      const all = [...Node.descendants(linkNode, {})];
-      const selfNodeEntry = all.find(([n, path]) => n.type === "link-editor");
-      Transforms.removeNodes(editor, { at: [...path, ...selfNodeEntry[1]] });
-      Transforms.select(editor, path);
-      event.stopPropagation();
-    },
-    [editor, linkNodeEntry]
-  );
+    const linkDOMNode = ReactEditor.toDOMNode(editor, node);
+    const {
+      x: nodeX,
+      height: nodeHeight,
+      y: nodeY,
+    } = linkDOMNode.getBoundingClientRect();
 
-  if (linkNodeEntry == null) {
+    editorEl.style.display = "block";
+    editorEl.style.top = `${nodeY + nodeHeight - editorOffsets.y}px`;
+    editorEl.style.left = `${nodeX - editorOffsets.x}px`;
+  }, [editor, editorOffsets.x, editorOffsets.y, node]);
+
+  if (editorOffsets == null) {
     return null;
   }
 
-  // const onRemove = useCallback(
-  //   (event) => {
-  //     Transforms.unwrapNodes(editor, { match: (n) => n.type === "link" });
-  //     event.stopPropagation();
-  //   },
-  //   [editor]
-  // );
-
   return (
-    <span className={"link-editor"} contentEditable={false} {...attributes}>
-      <input
-        style={{ margin: 8 }}
-        type="text"
-        value={linkText}
-        onChange={onLinkTextChange}
-      />
+    <div ref={linkEditorRef} className={"link-editor"} style={{}}>
       <input
         style={{ margin: 8 }}
         type="text"
         value={linkURL}
         onChange={onLinkURLChange}
+        onFocus={(event) => event.preventDefault()}
       />
       {/* Check if URL is valid */}
       <button disabled={!isUrl(linkURL)} onClick={onApply}>
         Apply
       </button>
-      <button onClick={onClose}>Close</button>
       {/* <button onClick={onRemove}>Remove</button> */}
-      {children}
-    </span>
+    </div>
   );
 }

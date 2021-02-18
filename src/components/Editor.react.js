@@ -2,71 +2,68 @@ import "./Editor.css";
 
 import { Editable, Slate, withReact } from "slate-react";
 import EditorAPI, { renderElement, renderLeaf } from "../utils/EditorAPI";
-import { useCallback, useMemo, useReducer } from "react";
+import { KeyBindings, isLinkNodeAtSelection } from "../utils/EditorAPI";
+import { Transforms, createEditor } from "slate";
+import { useCallback, useMemo, useRef } from "react";
 
-import { KeyBindings } from "../utils/EditorAPI";
+import LinkEditor from "./LinkEditor.react";
 import React from "react";
 import Toolbar from "./Toolbar.react";
-import { createEditor } from "slate";
 import useSelection from "../hooks/useSelection";
 
 export const EditorAPIContext = React.createContext(null);
 export const EditorDispatchContext = React.createContext(null);
 
-function reduce(state, action) {
-  switch (action.type) {
-    case "toggle_selection_menu":
-      return {
-        ...state,
-        shouldShowSelection: !state.shouldShowSelection,
-      };
-    default:
-      return state;
-  }
-}
+// A hack that needs to be applied to prevent selection from getting reset if some
+// input element outside takes focus. https://github.com/ianstormtaylor/slate/issues/3412
+Transforms.deselect = () => {};
 
 function Editor({ document, onChange }): JSX.Element {
-  const slateEditor = useMemo(() => withReact(createEditor()), []);
-  const editorAPI = useMemo(() => new EditorAPI(slateEditor), [slateEditor]);
-  const [_editorState, dispatch] = useReducer(reduce, { selectionRef: null });
-  // const [selection, setSelection] = useState(editorAPI.getSelection());
+  const editorRef = useRef(null);
+  const editor = useMemo(() => withReact(createEditor()), []);
+  const editorAPI = useMemo(() => new EditorAPI(editor), [editor]);
 
   const onKeyDown = useCallback(
     (event) => KeyBindings.onKeyDown(editorAPI, event),
     [editorAPI]
   );
 
-  const [previousSelection, selection, setSelection] = useSelection(
-    slateEditor
-  );
+  const [previousSelection, selection, setSelection] = useSelection(editor);
 
   // we update selection here because Slate fires an onChange even on pure selection change.
   const onChangeLocal = useCallback(
     (doc) => {
       onChange(doc);
-      setSelection(slateEditor.selection);
+      setSelection(editor.selection);
     },
-    [onChange, setSelection, slateEditor]
+    [onChange, setSelection, editor]
   );
 
   return (
-    <EditorDispatchContext.Provider value={dispatch}>
-      <EditorAPIContext.Provider value={editorAPI}>
-        <Slate editor={slateEditor} value={document} onChange={onChangeLocal}>
-          <Toolbar
-            selection={selection}
-            previousSelection={previousSelection}
-          />
-          <div className="editor">
-            <Editable
-              renderElement={renderElement}
-              renderLeaf={renderLeaf}
-              onKeyDown={onKeyDown}
+    <EditorAPIContext.Provider value={editorAPI}>
+      <Slate editor={editor} value={document} onChange={onChangeLocal}>
+        <Toolbar selection={selection} previousSelection={previousSelection} />
+        <div className="editor" ref={editorRef}>
+          {isLinkNodeAtSelection(editor, selection) ? (
+            <LinkEditor
+              editorOffsets={
+                editorRef.current != null
+                  ? {
+                      x: editorRef.current.getBoundingClientRect().x,
+                      y: editorRef.current.getBoundingClientRect().y,
+                    }
+                  : null
+              }
             />
-          </div>
-        </Slate>
-      </EditorAPIContext.Provider>
-    </EditorDispatchContext.Provider>
+          ) : null}
+          <Editable
+            renderElement={renderElement}
+            renderLeaf={renderLeaf}
+            onKeyDown={onKeyDown}
+          />
+        </div>
+      </Slate>
+    </EditorAPIContext.Provider>
   );
 }
 

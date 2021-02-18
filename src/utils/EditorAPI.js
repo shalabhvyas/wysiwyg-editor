@@ -1,4 +1,4 @@
-import { Editor, Element, Node } from "slate";
+import { Editor, Element } from "slate";
 import { Range, Transforms } from "slate";
 
 import { DefaultElement } from "slate-react";
@@ -142,33 +142,14 @@ export default class EditorAPI {
         Transforms.insertNodes(this._instance, {
           type: "link",
           url: "",
-          children: [
-            { text: "" },
-            {
-              type: "link-editor",
-              url: "",
-              linkText: "",
-              children: [{ text: "" }],
-            },
-            { text: "" },
-          ],
+          children: [{ text: "" }],
         });
       } else {
-        const editor = this._instance;
-        Editor.withoutNormalizing(editor, () => {
-          Transforms.wrapNodes(
-            editor,
-            { type: "link", url: "", children: [] },
-            { split: true }
-          );
-
-          const newlyInsertedLinkEntry = Editor.above(editor, {
-            match: (n) => n.type === "link",
-          });
-
-          // append the link editor so it pops up and user
-          appendLinkEditorToLinkNode(editor, newlyInsertedLinkEntry);
-        });
+        Transforms.wrapNodes(
+          this._instance,
+          { type: "link", url: "", children: [{ text: "" }] },
+          { split: true }
+        );
       }
     }
   }
@@ -231,28 +212,15 @@ export const KeyBindings = {
   },
 };
 
-export function appendLinkEditorToLinkNode(editor, linkNodeEntry) {
-  if (linkNodeEntry == null) return;
-
-  const [linkNode, path] = linkNodeEntry;
-
-  const hasLinkEditorOpen = linkNode.children.some(
-    (n) => n.type === "link-editor"
-  );
-
-  if (hasLinkEditorOpen) {
-    return;
+export function isLinkNodeAtSelection(editor, selection) {
+  if (selection == null) {
+    return false;
   }
 
-  const linkEditorPath = [...path, linkNode.children.length];
-  Transforms.insertNodes(
-    editor,
-    {
-      type: "link-editor",
-      url: linkNode.url,
-      linkText: Node.string(linkNode),
-      children: [{ text: "" }],
-    },
-    { at: linkEditorPath }
+  return (
+    Editor.above(editor, {
+      at: selection,
+      match: (n) => n.type === "link",
+    }) != null
   );
 }
