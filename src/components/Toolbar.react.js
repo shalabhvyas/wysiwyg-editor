@@ -9,9 +9,11 @@ import classNames from "classnames";
 import { useEditor } from "slate-react";
 import { v4 as uuidv4 } from "uuid";
 
-export default function Toolbar({ previousSelection }) {
+export default function Toolbar({ selection, previousSelection }) {
   const editor = useEditor();
   const api = useContext(EditorAPIContext);
+
+  console.log("Selection:", JSON.stringify(selection));
 
   const onBlockTypeChange = useCallback(
     (event) => {
@@ -47,6 +49,7 @@ export default function Toolbar({ previousSelection }) {
           isUploading: true,
           children: [{ text: "" }],
         },
+        // Talk about why we need previousSelection here - https://github.com/ianstormtaylor/slate/issues/3412#issuecomment-574831587
         { at: previousSelection, select: true }
       );
 
