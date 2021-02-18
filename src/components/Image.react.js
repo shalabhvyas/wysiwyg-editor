@@ -33,11 +33,15 @@ const Image = ({ attributes, children, element }) => {
 
   return (
     <div {...attributes} contentEditable={false} className="image-container">
-      <img
-        src={String(element.url)}
-        alt={element.caption}
-        className={"image"}
-      />
+      {!element.isUploading && element.url != null ? (
+        <img
+          src={String(element.url)}
+          alt={element.caption}
+          className={"image"}
+        />
+      ) : (
+        <div className={"image-upload-placeholder"}>Placeholder</div>
+      )}
       {isEditingCaption ? (
         <textarea
           type="text"

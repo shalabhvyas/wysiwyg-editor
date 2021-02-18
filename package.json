@@ -6,9 +6,12 @@
     "@testing-library/jest-dom": "^5.11.4",
     "@testing-library/react": "^11.1.0",
     "@testing-library/user-event": "^12.1.10",
+    "axios": "^0.21.1",
     "classnames": "^2.2.6",
+    "cors": "^2.8.5",
     "is-hotkey": "^0.2.0",
     "is-url": "^1.2.4",
+    "multer": "^1.4.2",
     "react": "^17.0.1",
     "react-dom": "^17.0.1",
     "react-scripts": "4.0.2",
@@ -41,5 +44,6 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
-  }
+  },
+  "proxy": "http://localhost:5000/"
 }

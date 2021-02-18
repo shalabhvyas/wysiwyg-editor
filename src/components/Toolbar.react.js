@@ -1,11 +1,13 @@
 import "./Toolbar.css";
 
+import { Editor, Transforms } from "slate";
 import { useCallback, useContext } from "react";
 
 import { EditorAPIContext } from "./Editor.react";
-import { Transforms } from "slate";
+import axios from "axios";
 import classNames from "classnames";
 import { useEditor } from "slate-react";
+import { v4 as uuidv4 } from "uuid";
 
 export default function Toolbar({ previousSelection }) {
   const editor = useEditor();
@@ -29,17 +31,49 @@ export default function Toolbar({ previousSelection }) {
       if (files.length === 0) {
         return;
       }
+      const fileName = files[0].name;
+      const formData = new FormData();
+      formData.append("photo", files[0]);
+
+      const id = uuidv4();
 
       Transforms.insertNodes(
         editor,
         {
+          id,
           type: "image",
-          caption: files[0].name,
-          url: "https://via.placeholder.com/150",
+          caption: fileName,
+          url: null,
+          isUploading: true,
           children: [{ text: "" }],
         },
         { at: previousSelection, select: true }
       );
+
+      axios
+        .post("/upload", formData, {
+          headers: {
+            "content-type": "multipart/form-data",
+          },
+        })
+        .then((response) => {
+          setTimeout(() => {
+            const newImageEntry = Editor.nodes(editor, {
+              match: (n) => n.id === id,
+            });
+
+            if (newImageEntry == null) {
+              return;
+            }
+
+            Transforms.setNodes(
+              editor,
+              { isUploading: false, url: `/photos/${fileName}` },
+              { at: newImageEntry[1] }
+            );
+          }, 3000);
+        })
+        .catch((error) => {});
     },
     [editor, previousSelection]
   );

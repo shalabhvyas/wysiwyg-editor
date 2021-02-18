@@ -6,6 +6,7 @@
 .image {
   display: block;
   margin: 0 auto;
+  max-width: 80%;
 }
 
 .image-caption-input,
@@ -13,4 +14,11 @@
   display: block;
   margin: 0 auto;
   margin-top: 8px;
+}
+
+.image-upload-placeholder {
+  background: gray;
+  height: 300px;
+  margin: 0 auto;
+  width: 80%;
 }
