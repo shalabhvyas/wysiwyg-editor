@@ -3,7 +3,7 @@ import "./Editor.css";
 import { Editable, Slate, withReact } from "slate-react";
 import EditorAPI, { renderElement, renderLeaf } from "../utils/EditorAPI";
 import { KeyBindings, isLinkNodeAtSelection } from "../utils/EditorAPI";
-import { Transforms, createEditor } from "slate";
+import { Node, Editor as SlateEditor, Transforms, createEditor } from "slate";
 import { useCallback, useMemo, useRef } from "react";
 
 import LinkEditor from "./LinkEditor.react";
@@ -35,6 +35,16 @@ function Editor({ document, onChange }): JSX.Element {
     (doc) => {
       onChange(doc);
       setSelection(editor.selection);
+
+      const [leaf, _] = SlateEditor.leaf(editor, editor.selection, {
+        edge: "end",
+      });
+      console.log(Node.string(leaf));
+      // use history object to detect space insertion
+      // and then use Node.string and try to run a regex match on it.
+      // and then Editor.deleteBackward to delete the word and replace with link OR
+      // do Transforms.setSelection to the link and then Transforms.wrapNodes.
+      // Try to use code from mentions - https://github.com/ianstormtaylor/slate/blob/master/site/examples/mentions.tsx#L80
     },
     [onChange, setSelection, editor]
   );
