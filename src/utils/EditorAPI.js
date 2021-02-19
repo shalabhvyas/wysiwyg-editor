@@ -1,5 +1,5 @@
 import { Editor, Element } from "slate";
-import { Node, Point, Range, Text, Transforms } from "slate";
+import { Point, Range, Text, Transforms } from "slate";
 
 import { DefaultElement } from "slate-react";
 import Image from "../components/Image.react";
@@ -244,8 +244,6 @@ export function convertTextToLinkIfAny(editor) {
   let [start] = Range.edges(editor.selection);
   const cursorPoint = start;
 
-  const E = Editor;
-  const N = Node;
   const startPointOfLastCharacter = Editor.before(editor, editor.selection, {
     unit: "character",
   });
@@ -275,10 +273,12 @@ export function convertTextToLinkIfAny(editor) {
 
   console.log(`Last word:*${lastWord}*`);
   if (urlRegex({ strict: false }).test(lastWord)) {
-    Transforms.wrapNodes(
-      editor,
-      { type: "link", url: lastWord, children: [{ text: "" }] },
-      { split: true, at: lastWordRange }
-    );
+    requestAnimationFrame(() => {
+      Transforms.wrapNodes(
+        editor,
+        { type: "link", url: lastWord, children: [{ text: lastWord }] },
+        { split: true, at: lastWordRange }
+      );
+    });
   }
 }
