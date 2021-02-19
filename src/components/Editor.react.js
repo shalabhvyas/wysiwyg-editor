@@ -10,8 +10,11 @@ import { KeyBindings, isLinkNodeAtSelection } from "../utils/EditorAPI";
 import { Transforms, createEditor } from "slate";
 import { useCallback, useMemo, useRef } from "react";
 
+import Col from "react-bootstrap/Col";
+import Container from "react-bootstrap/Container";
 import LinkEditor from "./LinkEditor.react";
 import React from "react";
+import Row from "react-bootstrap/Row";
 import Toolbar from "./Toolbar.react";
 import useSelection from "../hooks/useSelection";
 
@@ -47,26 +50,39 @@ function Editor({ document, onChange }): JSX.Element {
   return (
     <EditorAPIContext.Provider value={editorAPI}>
       <Slate editor={editor} value={document} onChange={onChangeLocal}>
-        <Toolbar selection={selection} previousSelection={previousSelection} />
-        <div className="editor" ref={editorRef}>
-          {isLinkNodeAtSelection(editor, selection) ? (
-            <LinkEditor
-              editorOffsets={
-                editorRef.current != null
-                  ? {
-                      x: editorRef.current.getBoundingClientRect().x,
-                      y: editorRef.current.getBoundingClientRect().y,
+        <Container>
+          <Row>
+            <Col>
+              <Toolbar
+                selection={selection}
+                previousSelection={previousSelection}
+              />
+            </Col>
+          </Row>
+          <Row>
+            <Col>
+              <div className="editor" ref={editorRef}>
+                {isLinkNodeAtSelection(editor, selection) ? (
+                  <LinkEditor
+                    editorOffsets={
+                      editorRef.current != null
+                        ? {
+                            x: editorRef.current.getBoundingClientRect().x,
+                            y: editorRef.current.getBoundingClientRect().y,
+                          }
+                        : null
                     }
-                  : null
-              }
-            />
-          ) : null}
-          <Editable
-            renderElement={renderElement}
-            renderLeaf={renderLeaf}
-            onKeyDown={onKeyDown}
-          />
-        </div>
+                  />
+                ) : null}
+                <Editable
+                  renderElement={renderElement}
+                  renderLeaf={renderLeaf}
+                  onKeyDown={onKeyDown}
+                />
+              </div>
+            </Col>
+          </Row>
+        </Container>
       </Slate>
     </EditorAPIContext.Provider>
   );

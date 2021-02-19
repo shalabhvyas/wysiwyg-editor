@@ -1,16 +1,15 @@
 .toolbar-btn {
-  cursor: pointer;
-  display: inline-block;
   margin: 0 8px;
-  padding: 8px;
-  background: gray;
-  text-transform: capitalize;
-}
-
-.is-active {
-  background: blue;
 }
 
 .image-upload-input {
   display: none;
+}
+
+.block-style-dropdown {
+  display: inline-block;
+}
+
+.toobar-right-panel {
+  text-align: right;
 }

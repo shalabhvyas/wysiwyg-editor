@@ -4,6 +4,8 @@ import { Editor, Transforms } from "slate";
 import React, { useCallback, useState } from "react";
 import { useEditor, useFocused, useSelected } from "slate-react";
 
+import Form from "react-bootstrap/Form";
+import Spinner from "react-bootstrap/Spinner";
 import classNames from "classnames";
 
 const Image = ({ attributes, children, element }) => {
@@ -52,14 +54,16 @@ const Image = ({ attributes, children, element }) => {
             className={"image"}
           />
         ) : (
-          <div className={"image-upload-placeholder"}>Placeholder</div>
+          <div className={"image-upload-placeholder"}>
+            <Spinner animation="grow" />
+          </div>
         )}
         {isEditingCaption ? (
-          <textarea
+          <Form.Control
+            size="sm"
             type="text"
-            value={element.caption}
-            className={"image-caption-input"}
-            onChange={onCaptionChange}
+            defaultValue={element.caption}
+            onCHange={onCaptionChange}
             onBlur={onToggleCaptionEditMode}
           />
         ) : (

@@ -37,9 +37,8 @@ function App() {
     {
       id: uuid(),
       type: "image",
-      url:
-        "https://cdn.pixabay.com/photo/2016/12/13/05/15/puppy-1903313_1280.jpg",
-      caption: "Cute Puppy",
+      url: "/photos/biwi.jpg",
+      caption: "Beauty",
       children: [{ text: "" }],
     },
     {

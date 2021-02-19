@@ -3,9 +3,14 @@ import "./Toolbar.css";
 import { Editor, Transforms } from "slate";
 import { useCallback, useContext } from "react";
 
+import Button from "react-bootstrap/Button";
+import Col from "react-bootstrap/Col";
+import Container from "react-bootstrap/Container";
+import Dropdown from "react-bootstrap/Dropdown";
+import DropdownButton from "react-bootstrap/DropdownButton";
 import { EditorAPIContext } from "./Editor.react";
+import Row from "react-bootstrap/Row";
 import axios from "axios";
-import classNames from "classnames";
 import { useEditor } from "slate-react";
 import { v4 as uuidv4 } from "uuid";
 
@@ -14,8 +19,7 @@ export default function Toolbar({ selection, previousSelection }) {
   const api = useContext(EditorAPIContext);
 
   const onBlockTypeChange = useCallback(
-    (event) => {
-      const targetType = event.target.value;
+    (targetType) => {
       if (targetType === "multiple") {
         return;
       }
@@ -80,57 +84,68 @@ export default function Toolbar({ selection, previousSelection }) {
   );
 
   return (
-    <div>
-      {["bold", "italic", "underline", "code"].map((style) => (
-        <ToolBarStyleButton key={style} style={style} label={style} />
-      ))}
-      <select
-        id="block-type"
-        onChange={onBlockTypeChange}
-        value={api.getBlockType() ?? "paragraph"}
-      >
-        {["h1", "h2", "paragraph", "multiple"].map((blockType) => (
-          <option value={blockType} key={blockType} label={blockType} />
+    <Row>
+      <Col xs={12} md={8}>
+        <DropdownButton
+          className={"block-style-dropdown"}
+          id="block-style"
+          title={getLabelForBlockStyle(api.getBlockType() ?? "paragraph")}
+          onSelect={onBlockTypeChange}
+        >
+          {["h1", "h2", "paragraph", "multiple"].map((blockType) => (
+            <Dropdown.Item eventKey={blockType} key={blockType}>
+              {getLabelForBlockStyle(blockType)}
+            </Dropdown.Item>
+          ))}
+        </DropdownButton>
+        {["bold", "italic", "underline", "code"].map((style) => (
+          <ToolBarStyleButton
+            key={style}
+            style={style}
+            icon={<i className={`bi ${getIconForButton(style)}`} />}
+          />
         ))}
-      </select>
-      <ToolBarButton
-        role="button"
-        isActive={api.hasActiveLinkAtSelection()}
-        label={"Link"}
-        onMouseDown={() => api.toggleLinkAtSelection()}
-      />
-      <ToolBarButton
-        role="button"
-        isActive={false}
-        label={
-          <>
-            <label htmlFor="image-upload">{"Upload Image"}</label>
-            <input
-              type="file"
-              id="image-upload"
-              className="image-upload-input"
-              accept="image/png, image/jpeg"
-              onChange={onImageUploaded}
-            />
-          </>
-        }
-      />
-    </div>
+      </Col>
+      <Col xs={12} md={4} className="toobar-right-panel">
+        <ToolBarButton
+          isActive={api.hasActiveLinkAtSelection()}
+          label={<i className={`bi ${getIconForButton("link")}`} />}
+          onMouseDown={() => api.toggleLinkAtSelection()}
+        />
+        <ToolBarButton
+          isActive={false}
+          as={"label"}
+          htmlFor="image-upload"
+          label={
+            <>
+              <i className={`bi ${getIconForButton("image")}`} />
+              <input
+                type="file"
+                id="image-upload"
+                className="image-upload-input"
+                accept="image/png, image/jpeg"
+                onChange={onImageUploaded}
+              />
+            </>
+          }
+        />
+      </Col>
+    </Row>
   );
 }
 
-function ToolBarStyleButton({ style, label }) {
+function ToolBarStyleButton({ as, style, icon }) {
   const api = useContext(EditorAPIContext);
 
   return (
     <ToolBarButton
-      role="button"
+      as={as}
       onMouseDown={(event) => {
         event.preventDefault();
         api.toggleStyle(style);
       }}
       isActive={api.getActiveStyles().has(style)}
-      label={label}
+      label={icon}
     />
   );
 }
@@ -138,16 +153,51 @@ function ToolBarStyleButton({ style, label }) {
 function ToolBarButton(props) {
   const { label, isActive, ...otherProps } = props;
   return (
-    <div
-      role="button"
+    <Button
+      variant="outline-primary"
+      className="toolbar-btn"
+      active={isActive}
       {...otherProps}
-      className={classNames({
-        "toolbar-btn": true,
-        "is-active": isActive,
-      })}
-      aria-pressed={isActive + ""}
     >
       {label}
-    </div>
+    </Button>
   );
+}
+
+function getIconForButton(style) {
+  switch (style) {
+    case "bold":
+      return "bi-type-bold";
+    case "italic":
+      return "bi-type-italic";
+    case "code":
+      return "bi-code-slash";
+    case "underline":
+      return "bi-type-underline";
+    case "image":
+      return "bi-file-image";
+    case "link":
+      return "bi-link-45deg";
+    default:
+      return "";
+  }
+}
+
+function getLabelForBlockStyle(style) {
+  switch (style) {
+    case "h1":
+      return "Heading 1";
+    case "h2":
+      return "Heading 2";
+    case "h3":
+      return "Heading 3";
+    case "h4":
+      return "Heading 4";
+    case "paragraph":
+      return "Paragraph";
+    case "multiple":
+      return "Multiple";
+    default:
+      return "";
+  }
 }

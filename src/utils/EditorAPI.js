@@ -271,7 +271,6 @@ export function convertTextToLinkIfAny(editor) {
   const lastWordRange = Editor.range(editor, end, startPointOfLastCharacter);
   const lastWord = Editor.string(editor, lastWordRange);
 
-  console.log(`Last word:*${lastWord}*`);
   if (urlRegex({ strict: false }).test(lastWord)) {
     requestAnimationFrame(() => {
       Transforms.wrapNodes(
