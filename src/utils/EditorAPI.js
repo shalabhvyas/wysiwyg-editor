@@ -9,8 +9,7 @@ import React from "react";
 import { ReactEditor } from "slate-react";
 import StyledText from "../components/StyledText.react";
 import isHotkey from "is-hotkey";
-
-const URL_REGEX_PATTERN = /^(http:\/\/www\.|https:\/\/www\.|http:\/\/|https:\/\/)?[a-z0-9]+([\-\.]{1}[a-z0-9]+)*\.[a-z]{2,5}(:[0-9]{1,5})?(\/.*)?$/;
+import urlRegex from "url-regex";
 
 export default class EditorAPI {
   _instance;
@@ -275,16 +274,11 @@ export function convertTextToLinkIfAny(editor) {
   const lastWord = Editor.string(editor, lastWordRange);
 
   console.log(`Last word:*${lastWord}*`);
-  const match = lastWord && lastWord.match(URL_REGEX_PATTERN);
-  console.log("match:", match);
-  // if (start != null && startPointOfLastCharacter != null) {
-  //   const lastWord = Editor.string(
-  //     editor,
-  //     Editor.range(editor, startPointOfLastCharacter, cursorPoint)
-  //   );
-  //
-  //   if (match != null) {
-  //     console.log(match);
-  //   }
-  // }
+  if (urlRegex({ strict: false }).test(lastWord)) {
+    Transforms.wrapNodes(
+      editor,
+      { type: "link", url: lastWord, children: [{ text: "" }] },
+      { split: true, at: lastWordRange }
+    );
+  }
 }
