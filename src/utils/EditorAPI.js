@@ -1,5 +1,5 @@
 import { Editor, Element } from "slate";
-import { Range, Transforms } from "slate";
+import { Node, Point, Range, Text, Transforms } from "slate";
 
 import { DefaultElement } from "slate-react";
 import Image from "../components/Image.react";
@@ -9,6 +9,8 @@ import React from "react";
 import { ReactEditor } from "slate-react";
 import StyledText from "../components/StyledText.react";
 import isHotkey from "is-hotkey";
+
+const URL_REGEX_PATTERN = /^(http:\/\/www\.|https:\/\/www\.|http:\/\/|https:\/\/)?[a-z0-9]+([\-\.]{1}[a-z0-9]+)*\.[a-z]{2,5}(:[0-9]{1,5})?(\/.*)?$/;
 
 export default class EditorAPI {
   _instance;
@@ -223,4 +225,66 @@ export function isLinkNodeAtSelection(editor, selection) {
       match: (n) => n.type === "link",
     }) != null
   );
+}
+
+export function convertTextToLinkIfAny(editor) {
+  if (editor.selection == null || !Range.isCollapsed(editor.selection)) {
+    return;
+  }
+
+  const [node, _] = Editor.parent(editor, editor.selection);
+  if (node.type === "link") {
+    return;
+  }
+
+  const [currentNode, currentNodePath] = Editor.node(editor, editor.selection);
+  if (!Text.isText(currentNode)) {
+    return;
+  }
+
+  let [start] = Range.edges(editor.selection);
+  const cursorPoint = start;
+
+  const E = Editor;
+  const N = Node;
+  const startPointOfLastCharacter = Editor.before(editor, editor.selection, {
+    unit: "character",
+  });
+
+  const lastCharacter = Editor.string(
+    editor,
+    Editor.range(editor, startPointOfLastCharacter, cursorPoint)
+  );
+
+  if (lastCharacter !== " ") {
+    return;
+  }
+
+  let end = startPointOfLastCharacter;
+  start = Editor.before(editor, end, { unit: "character" });
+  const startOfText = Editor.point(editor, currentNodePath, { edge: "start" });
+  while (
+    Editor.string(editor, Editor.range(editor, start, end)) !== " " &&
+    !Point.isBefore(start, startOfText)
+  ) {
+    end = start;
+    start = Editor.before(editor, end, { unit: "character" });
+  }
+
+  const lastWordRange = Editor.range(editor, end, startPointOfLastCharacter);
+  const lastWord = Editor.string(editor, lastWordRange);
+
+  console.log(`Last word:*${lastWord}*`);
+  const match = lastWord && lastWord.match(URL_REGEX_PATTERN);
+  console.log("match:", match);
+  // if (start != null && startPointOfLastCharacter != null) {
+  //   const lastWord = Editor.string(
+  //     editor,
+  //     Editor.range(editor, startPointOfLastCharacter, cursorPoint)
+  //   );
+  //
+  //   if (match != null) {
+  //     console.log(match);
+  //   }
+  // }
 }
