@@ -76,12 +76,3 @@ export default function LinkEditor({ editorOffsets }) {
     </Card>
   );
 }
-
-// {/* <input
-//         style={{ margin: 8 }}
-//         type="text"
-//         value={linkURL}
-//         onChange={onLinkURLChange}
-//         onFocus={(event) => event.preventDefault()}
-//       /> */}
-//       {/* <button onClick={onRemove}>Remove</button> */}

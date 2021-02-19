@@ -91,7 +91,6 @@ export default function Toolbar({ selection, previousSelection }) {
 
 function ToolBarStyleButton({ as, style, icon }) {
   const editor = useEditor();
-
   return (
     <ToolBarButton
       as={as}
