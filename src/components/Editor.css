@@ -1,10 +1,12 @@
-.editor {
+.editor-container {
   background: #fff;
   box-shadow: rgb(0 0 0 / 10%) 1px 1px 0px inset,
     rgb(0 0 0 / 7%) 0px -1px 0px inset;
   border-width: 1 1 1 6;
+}
+
+.editor {
   min-height: 90vh;
-  margin: 20px 0;
-  padding: 20px;
   position: relative;
+  padding: 20px;
 }

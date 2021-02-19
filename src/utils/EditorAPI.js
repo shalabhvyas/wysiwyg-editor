@@ -36,7 +36,7 @@ export default class EditorAPI {
     return new Set(Object.keys(Editor.marks(this._instance) ?? {}));
   }
 
-  getBlockType() {
+  getTextBlockStyle() {
     // Change the logic below to basically find
     // - the closest block parent of the anchor
     // - siblings of anchor's block parent.
@@ -63,7 +63,7 @@ export default class EditorAPI {
       startIndex++;
     }
 
-    return currentBlockType;
+    return currentBlockType !== "image" ? currentBlockType : null;
   }
 
   getBlockNode(path) {

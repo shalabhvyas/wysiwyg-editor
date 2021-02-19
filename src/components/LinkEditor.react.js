@@ -4,6 +4,9 @@ import { Editor, Transforms } from "slate";
 import { ReactEditor, useEditor } from "slate-react";
 import { useCallback, useEffect, useRef, useState } from "react";
 
+import Button from "react-bootstrap/Button";
+import Card from "react-bootstrap/Card";
+import Form from "react-bootstrap/Form";
 import isUrl from "is-url";
 
 export default function LinkEditor({ editorOffsets }) {
@@ -52,19 +55,33 @@ export default function LinkEditor({ editorOffsets }) {
   }
 
   return (
-    <div ref={linkEditorRef} className={"link-editor"} style={{}}>
-      <input
-        style={{ margin: 8 }}
-        type="text"
-        value={linkURL}
-        onChange={onLinkURLChange}
-        onFocus={(event) => event.preventDefault()}
-      />
-      {/* Check if URL is valid */}
-      <button disabled={!isUrl(linkURL)} onClick={onApply}>
-        Apply
-      </button>
-      {/* <button onClick={onRemove}>Remove</button> */}
-    </div>
+    <Card ref={linkEditorRef} className={"link-editor"}>
+      <Card.Body>
+        <Form.Control
+          size="sm"
+          type="text"
+          value={linkURL}
+          onChange={onLinkURLChange}
+        />
+        <Button
+          className={"link-editor-btn"}
+          size="sm"
+          variant="primary"
+          disabled={!isUrl(linkURL)}
+          onClick={onApply}
+        >
+          Apply
+        </Button>
+      </Card.Body>
+    </Card>
   );
 }
+
+// {/* <input
+//         style={{ margin: 8 }}
+//         type="text"
+//         value={linkURL}
+//         onChange={onLinkURLChange}
+//         onFocus={(event) => event.preventDefault()}
+//       /> */}
+//       {/* <button onClick={onRemove}>Remove</button> */}

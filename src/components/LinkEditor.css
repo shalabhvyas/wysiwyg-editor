@@ -2,7 +2,10 @@
   display: none;
   background: white;
   position: absolute;
-  padding: 16px;
-  border: 1px solid #000;
   margin-top: 4px;
+  min-width: 300px;
+}
+
+.link-editor-btn {
+  margin-top: 16px;
 }

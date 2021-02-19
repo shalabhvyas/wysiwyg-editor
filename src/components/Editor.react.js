@@ -50,7 +50,7 @@ function Editor({ document, onChange }): JSX.Element {
   return (
     <EditorAPIContext.Provider value={editorAPI}>
       <Slate editor={editor} value={document} onChange={onChangeLocal}>
-        <Container>
+        <Container className={"editor-container"}>
           <Row>
             <Col>
               <Toolbar

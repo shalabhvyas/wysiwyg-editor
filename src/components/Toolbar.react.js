@@ -82,54 +82,53 @@ export default function Toolbar({ selection, previousSelection }) {
     [editor, previousSelection]
   );
 
+  const blockType = api.getTextBlockStyle();
+  console.log("blockType:", blockType);
   return (
-    <Row>
-      <Col xs={12} md={8}>
-        <DropdownButton
-          className={"block-style-dropdown"}
-          id="block-style"
-          title={getLabelForBlockStyle(api.getBlockType() ?? "paragraph")}
-          onSelect={onBlockTypeChange}
-        >
-          {["h1", "h2", "paragraph", "multiple"].map((blockType) => (
-            <Dropdown.Item eventKey={blockType} key={blockType}>
-              {getLabelForBlockStyle(blockType)}
-            </Dropdown.Item>
-          ))}
-        </DropdownButton>
-        {["bold", "italic", "underline", "code"].map((style) => (
-          <ToolBarStyleButton
-            key={style}
-            style={style}
-            icon={<i className={`bi ${getIconForButton(style)}`} />}
-          />
+    <div className="toolbar">
+      <DropdownButton
+        className={"block-style-dropdown"}
+        disabled={blockType == null || blockType === ""}
+        id="block-style"
+        title={getLabelForBlockStyle(blockType ?? "paragraph")}
+        onSelect={onBlockTypeChange}
+      >
+        {["h1", "h2", "paragraph", "multiple"].map((blockType) => (
+          <Dropdown.Item eventKey={blockType} key={blockType}>
+            {getLabelForBlockStyle(blockType)}
+          </Dropdown.Item>
         ))}
-      </Col>
-      <Col xs={12} md={4} className="toobar-right-panel">
-        <ToolBarButton
-          isActive={api.hasActiveLinkAtSelection()}
-          label={<i className={`bi ${getIconForButton("link")}`} />}
-          onMouseDown={() => api.toggleLinkAtSelection()}
+      </DropdownButton>
+      {["bold", "italic", "underline", "code"].map((style) => (
+        <ToolBarStyleButton
+          key={style}
+          style={style}
+          icon={<i className={`bi ${getIconForButton(style)}`} />}
         />
-        <ToolBarButton
-          isActive={false}
-          as={"label"}
-          htmlFor="image-upload"
-          label={
-            <>
-              <i className={`bi ${getIconForButton("image")}`} />
-              <input
-                type="file"
-                id="image-upload"
-                className="image-upload-input"
-                accept="image/png, image/jpeg"
-                onChange={onImageUploaded}
-              />
-            </>
-          }
-        />
-      </Col>
-    </Row>
+      ))}
+      <ToolBarButton
+        isActive={api.hasActiveLinkAtSelection()}
+        label={<i className={`bi ${getIconForButton("link")}`} />}
+        onMouseDown={() => api.toggleLinkAtSelection()}
+      />
+      <ToolBarButton
+        isActive={false}
+        as={"label"}
+        htmlFor="image-upload"
+        label={
+          <>
+            <i className={`bi ${getIconForButton("image")}`} />
+            <input
+              type="file"
+              id="image-upload"
+              className="image-upload-input"
+              accept="image/png, image/jpeg"
+              onChange={onImageUploaded}
+            />
+          </>
+        }
+      />
+    </div>
   );
 }
 
