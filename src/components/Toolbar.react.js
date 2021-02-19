@@ -16,7 +16,7 @@ import { useCallback } from "react";
 import { useEditor } from "slate-react";
 import useImageUploadHandler from "../hooks/useImageUploadHandler";
 
-const PARAGRAPH_STYLES = ["h1", "h2", "paragraph", "multiple"];
+const PARAGRAPH_STYLES = ["h1", "h2", "h3", "h4", "paragraph", "multiple"];
 const CHARACTER_STYLES = ["bold", "italic", "underline", "code"];
 
 export default function Toolbar({ selection, previousSelection }) {

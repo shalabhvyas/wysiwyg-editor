@@ -50,6 +50,14 @@ const ExampleDocument = [
     children: [{ text: "" }],
   },
   {
+    type: "h3",
+    children: [{ text: "Section Title (Heading H3)" }],
+  },
+  {
+    type: "h4",
+    children: [{ text: "Section subtitle (Heading H4)" }],
+  },
+  {
     type: "paragraph",
     children: [
       {

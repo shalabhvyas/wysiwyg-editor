@@ -40,6 +40,18 @@ function renderElement(props) {
           {children}
         </h2>
       );
+    case "h3":
+      return (
+        <h3 {...attributes} content-editable={"true"}>
+          {children}
+        </h3>
+      );
+    case "h4":
+      return (
+        <h4 {...attributes} content-editable={"true"}>
+          {children}
+        </h4>
+      );
     case "link":
       return <Link {...props} url={element.url} />;
     case "link-editor":
