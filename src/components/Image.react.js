@@ -54,15 +54,10 @@ const Image = ({ attributes, children, element }) => {
     [setEditingCaption, isEditingCaption]
   );
 
-  // Talk about how Slate breaks if you don't have things in a certain way
-  // when rendering void elements. Rules are -
-  // Topmost element should have the slate attributes.
-  // contentEditable={false} should be a child of that with the contents of the void element
-  // children should be rendered outside the content editable.
   return (
-    <div {...attributes}>
+    // void elements need to be content editable false, explain that part.
+    <div contentEditable={false} {...attributes}>
       <div
-        contentEditable={false}
         className={classNames({
           "image-container": true,
           "is-selected": selected && focused,
@@ -98,8 +93,8 @@ const Image = ({ attributes, children, element }) => {
           </div>
         )}
       </div>
-      {/* Talk about why void elements still need to render children and why children need to be rendered outside
-      content editable. */}
+      {/* Void blocks in general, always have an empty text node to have a point to select to.This is children here. 
+      And that is why we have to have an empty text ''  node at the end*/}
       {children}
     </div>
   );
