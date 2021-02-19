@@ -1,91 +1,45 @@
 import "./Toolbar.css";
 
-import { Editor, Transforms } from "slate";
-import { useCallback, useContext } from "react";
+import {
+  getActiveStyles,
+  getTextBlockStyle,
+  hasActiveLinkAtSelection,
+  toggleBlockType,
+  toggleLinkAtSelection,
+  toggleStyle,
+} from "../utils/EditorUtils";
 
 import Button from "react-bootstrap/Button";
-import Col from "react-bootstrap/Col";
 import Dropdown from "react-bootstrap/Dropdown";
 import DropdownButton from "react-bootstrap/DropdownButton";
-import { EditorAPIContext } from "./Editor.react";
-import Row from "react-bootstrap/Row";
-import axios from "axios";
+import { useCallback } from "react";
 import { useEditor } from "slate-react";
-import { v4 as uuidv4 } from "uuid";
+import useImageUploadHandler from "../hooks/useImageUploadHandler";
+
+const PARAGRAPH_STYLES = ["h1", "h2", "paragraph", "multiple"];
+const CHARACTER_STYLES = ["bold", "italic", "underline", "code"];
 
 export default function Toolbar({ selection, previousSelection }) {
   const editor = useEditor();
-  const api = useContext(EditorAPIContext);
 
   const onBlockTypeChange = useCallback(
     (targetType) => {
       if (targetType === "multiple") {
         return;
       }
-      api.toggleBlockType(targetType);
+      toggleBlockType(editor, targetType);
     },
-    [api]
+    [editor]
   );
 
-  const onImageUploaded = useCallback(
-    (event) => {
-      event.preventDefault();
-      const files = event.target.files;
-      if (files.length === 0) {
-        return;
-      }
-      const fileName = files[0].name;
-      const formData = new FormData();
-      formData.append("photo", files[0]);
+  // Talk about why we need previousSelection here - https://github.com/ianstormtaylor/slate/issues/3412#issuecomment-574831587
+  const onImageSelected = useImageUploadHandler(editor, previousSelection);
 
-      const id = uuidv4();
+  const blockType = getTextBlockStyle(editor);
 
-      Transforms.insertNodes(
-        editor,
-        {
-          id,
-          type: "image",
-          caption: fileName,
-          url: null,
-          isUploading: true,
-          children: [{ text: "" }],
-        },
-        // Talk about why we need previousSelection here - https://github.com/ianstormtaylor/slate/issues/3412#issuecomment-574831587
-        { at: previousSelection, select: true }
-      );
-
-      axios
-        .post("/upload", formData, {
-          headers: {
-            "content-type": "multipart/form-data",
-          },
-        })
-        .then((response) => {
-          setTimeout(() => {
-            const newImageEntry = Editor.nodes(editor, {
-              match: (n) => n.id === id,
-            });
-
-            if (newImageEntry == null) {
-              return;
-            }
-
-            Transforms.setNodes(
-              editor,
-              { isUploading: false, url: `/photos/${fileName}` },
-              { at: newImageEntry[1] }
-            );
-          }, 3000);
-        })
-        .catch((error) => {});
-    },
-    [editor, previousSelection]
-  );
-
-  const blockType = api.getTextBlockStyle();
-  console.log("blockType:", blockType);
   return (
     <div className="toolbar">
+      {/* Dropdown for paragraph styles */}
       <DropdownButton
         className={"block-style-dropdown"}
         disabled={blockType == null || blockType === ""}
@@ -93,24 +47,27 @@ export default function Toolbar({ selection, previousSelection }) {
         title={getLabelForBlockStyle(blockType ?? "paragraph")}
         onSelect={onBlockTypeChange}
       >
-        {["h1", "h2", "paragraph", "multiple"].map((blockType) => (
+        {PARAGRAPH_STYLES.map((blockType) => (
           <Dropdown.Item eventKey={blockType} key={blockType}>
             {getLabelForBlockStyle(blockType)}
           </Dropdown.Item>
         ))}
       </DropdownButton>
-      {["bold", "italic", "underline", "code"].map((style) => (
+      {/* Buttons for character styles */}
+      {CHARACTER_STYLES.map((style) => (
         <ToolBarStyleButton
           key={style}
           style={style}
           icon={<i className={`bi ${getIconForButton(style)}`} />}
         />
       ))}
+      {/* Link Button */}
       <ToolBarButton
-        isActive={api.hasActiveLinkAtSelection()}
+        isActive={hasActiveLinkAtSelection(editor)}
         label={<i className={`bi ${getIconForButton("link")}`} />}
-        onMouseDown={() => api.toggleLinkAtSelection()}
+        onMouseDown={() => toggleLinkAtSelection(editor)}
       />
+      {/* Image Upload Button */}
       <ToolBarButton
         isActive={false}
         as={"label"}
@@ -123,7 +80,7 @@ export default function Toolbar({ selection, previousSelection }) {
               id="image-upload"
               className="image-upload-input"
               accept="image/png, image/jpeg"
-              onChange={onImageUploaded}
+              onChange={onImageSelected}
             />
           </>
         }
@@ -133,16 +90,16 @@ export default function Toolbar({ selection, previousSelection }) {
 }
 
 function ToolBarStyleButton({ as, style, icon }) {
-  const api = useContext(EditorAPIContext);
+  const editor = useEditor();
 
   return (
     <ToolBarButton
       as={as}
       onMouseDown={(event) => {
         event.preventDefault();
-        api.toggleStyle(style);
+        toggleStyle(editor, style);
       }}
-      isActive={api.getActiveStyles().has(style)}
+      isActive={getActiveStyles(editor).has(style)}
       label={icon}
     />
   );
@@ -177,7 +134,7 @@ function getIconForButton(style) {
     case "link":
       return "bi-link-45deg";
     default:
-      return "";
+      throw new Error(`Unhandled style in getIconForButton: ${style}`);
   }
 }
 
@@ -196,6 +153,6 @@ function getLabelForBlockStyle(style) {
     case "multiple":
       return "Multiple";
     default:
-      return "";
+      throw new Error(`Unhandled style in getLabelForBlockStyle: ${style}`);
   }
 }

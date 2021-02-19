@@ -1,17 +1,20 @@
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useRef, useState } from "react";
+
+import areEqual from "deep-equal";
 
 export default function useSelection(editor) {
   const [selection, setSelection] = useState(editor.selection);
   const previousSelection = useRef(null);
   const setSelectionOptimized = useCallback(
-    (selection) => {
-      setSelection(selection);
+    (newSelection) => {
+      if (areEqual(selection, newSelection)) {
+        return;
+      }
+      previousSelection.current = selection;
+      setSelection(newSelection);
     },
-    [setSelection]
+    [setSelection, selection]
   );
 
-  useEffect(() => {
-    previousSelection.current = selection;
-  });
   return [previousSelection.current, selection, setSelectionOptimized];
 }
