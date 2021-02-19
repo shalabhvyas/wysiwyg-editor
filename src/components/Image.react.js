@@ -71,7 +71,7 @@ const Image = ({ attributes, children, element }) => {
           />
         ) : (
           <div className={"image-upload-placeholder"}>
-            <Spinner animation="grow" />
+            <Spinner animation="border" variant="dark" />
           </div>
         )}
         {isEditingCaption ? (

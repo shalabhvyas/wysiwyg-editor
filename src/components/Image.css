@@ -27,8 +27,17 @@
 }
 
 .image-upload-placeholder {
-  background: gray;
+  align-items: center;
+  background: rgba(0, 0, 0, 0.03);
+  border: 1px solid rgba(0, 0, 0, 0.125);
+  display: flex;
   height: 300px;
+  justify-content: center;
   margin: 0 auto;
   width: 80%;
+}
+
+.image,
+.image-upload-placeholder {
+  border-radius: 2px;
 }
