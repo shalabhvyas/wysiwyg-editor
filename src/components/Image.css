@@ -1,6 +1,7 @@
 .image-container {
   margin: 20px auto;
   text-align: center;
+  user-select: none;
 }
 
 .is-selected img {
@@ -18,6 +19,11 @@
   display: block;
   margin: 0 auto;
   margin-top: 8px;
+}
+
+.image-caption-input {
+  width: 400px;
+  text-align: center;
 }
 
 .image-upload-placeholder {

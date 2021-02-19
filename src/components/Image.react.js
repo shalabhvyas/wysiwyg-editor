@@ -7,6 +7,7 @@ import { useEditor, useFocused, useSelected } from "slate-react";
 import Form from "react-bootstrap/Form";
 import Spinner from "react-bootstrap/Spinner";
 import classNames from "classnames";
+import isHotkey from "is-hotkey";
 
 const Image = ({ attributes, children, element }) => {
   const [isEditingCaption, setEditingCaption] = useState(false);
@@ -15,32 +16,52 @@ const Image = ({ attributes, children, element }) => {
   const selected = useSelected();
   const focused = useFocused();
 
-  const onCaptionChange = useCallback(
-    (event) => {
+  const changeCaption = useCallback(
+    (caption) => {
       const imageNodeEntry = Editor.above(editor, {
         match: (n) => n.type === "image",
       });
       if (imageNodeEntry == null) {
         return;
       }
-      Transforms.setNodes(
-        editor,
-        { caption: event.target.value },
-        { at: imageNodeEntry[1] }
-      );
+      Transforms.setNodes(editor, { caption }, { at: imageNodeEntry[1] });
     },
     [editor]
   );
 
+  const onCaptionChange = useCallback(
+    (event) => {
+      changeCaption(event.target.value);
+    },
+    [changeCaption]
+  );
+
+  const onKeyDown = useCallback(
+    (event) => {
+      if (!isHotkey("enter", event)) {
+        return;
+      }
+      changeCaption(event.target.value);
+      setEditingCaption(false);
+    },
+    [changeCaption]
+  );
+
   const onToggleCaptionEditMode = useCallback(
-    () => setEditingCaption(!isEditingCaption),
+    (event) => {
+      setEditingCaption(!isEditingCaption);
+    },
     [setEditingCaption, isEditingCaption]
   );
 
+  // Talk about how Slate breaks if you don't have things in a certain way
+  // when rendering void elements. Rules are -
+  // Topmost element should have the slate attributes.
+  // contentEditable={false} should be a child of that with the contents of the void element
+  // children should be rendered outside the content editable.
   return (
-    <>
+    <div {...attributes}>
       <div
-        {...attributes}
         contentEditable={false}
         className={classNames({
           "image-container": true,
@@ -60,10 +81,12 @@ const Image = ({ attributes, children, element }) => {
         )}
         {isEditingCaption ? (
           <Form.Control
+            className={"image-caption-input"}
             size="sm"
             type="text"
             defaultValue={element.caption}
-            onCHange={onCaptionChange}
+            onKeyDown={onKeyDown}
+            onChange={onCaptionChange}
             onBlur={onToggleCaptionEditMode}
           />
         ) : (
@@ -78,7 +101,7 @@ const Image = ({ attributes, children, element }) => {
       {/* Talk about why void elements still need to render children and why children need to be rendered outside
       content editable. */}
       {children}
-    </>
+    </div>
   );
 };
 

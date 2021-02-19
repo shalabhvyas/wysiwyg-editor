@@ -5,7 +5,6 @@ import { useCallback, useContext } from "react";
 
 import Button from "react-bootstrap/Button";
 import Col from "react-bootstrap/Col";
-import Container from "react-bootstrap/Container";
 import Dropdown from "react-bootstrap/Dropdown";
 import DropdownButton from "react-bootstrap/DropdownButton";
 import { EditorAPIContext } from "./Editor.react";
