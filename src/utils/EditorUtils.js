@@ -13,20 +13,23 @@ export function getTextBlockStyle(editor) {
     return null;
   }
 
-  const [start, end] = Range.edges(selection);
-  let startTopLevelBlockIndex = start.path[0];
-  const endTopLevelBlockIndex = end.path[0];
+  const topLevelBlockNodesInSelection = Editor.nodes(editor, {
+    at: editor.selection,
+    mode: "highest",
+    match: (n) => Editor.isBlock(editor, n),
+  });
 
   let blockType = null;
-  while (startTopLevelBlockIndex <= endTopLevelBlockIndex) {
-    // depth = 1 because node is a top level block element
-    const [node, _] = Editor.node(editor, [startTopLevelBlockIndex]);
+  let nodeEntry = topLevelBlockNodesInSelection.next();
+  while (!nodeEntry.done) {
+    const [node, _] = nodeEntry.value;
     if (blockType == null) {
       blockType = node.type;
     } else if (blockType !== node.type) {
       return "multiple";
     }
-    startTopLevelBlockIndex++;
+
+    nodeEntry = topLevelBlockNodesInSelection.next();
   }
 
   return blockType !== "image" ? blockType : null;
@@ -44,7 +47,11 @@ export function toggleStyle(editor, style) {
 export function toggleBlockType(editor, blockType) {
   const currentBlockType = getTextBlockStyle(editor);
   const changeTo = currentBlockType === blockType ? "paragraph" : blockType;
-  Transforms.setNodes(editor, { type: changeTo });
+  Transforms.setNodes(
+    editor,
+    { type: changeTo },
+    { at: editor.selection, match: (n) => Editor.isBlock(editor, n) }
+  );
 }
 
 export function hasActiveLinkAtSelection(editor) {
