@@ -11,29 +11,38 @@ import isHotkey from "is-hotkey";
 
 const Image = ({ attributes, children, element }) => {
   const [isEditingCaption, setEditingCaption] = useState(false);
+  const [caption, setCaption] = useState(element.caption);
   const editor = useEditor();
 
   const selected = useSelected();
   const focused = useFocused();
 
-  const changeCaption = useCallback(
-    (caption) => {
+  const applyCaptionChange = useCallback(
+    (captionInput) => {
       const imageNodeEntry = Editor.above(editor, {
         match: (n) => n.type === "image",
       });
       if (imageNodeEntry == null) {
         return;
       }
-      Transforms.setNodes(editor, { caption }, { at: imageNodeEntry[1] });
+
+      if (captionInput != null) {
+        setCaption(captionInput);
+      }
+      Transforms.setNodes(
+        editor,
+        { caption: captionInput },
+        { at: imageNodeEntry[1] }
+      );
     },
     [editor]
   );
 
   const onCaptionChange = useCallback(
     (event) => {
-      changeCaption(event.target.value);
+      setCaption(event.target.value);
     },
-    [changeCaption]
+    [setCaption]
   );
 
   const onKeyDown = useCallback(
@@ -41,10 +50,10 @@ const Image = ({ attributes, children, element }) => {
       if (!isHotkey("enter", event)) {
         return;
       }
-      changeCaption(event.target.value);
+      applyCaptionChange(event.target.value);
       setEditingCaption(false);
     },
-    [changeCaption]
+    [applyCaptionChange]
   );
 
   const onToggleCaptionEditMode = useCallback(
@@ -64,11 +73,7 @@ const Image = ({ attributes, children, element }) => {
         })}
       >
         {!element.isUploading && element.url != null ? (
-          <img
-            src={String(element.url)}
-            alt={element.caption}
-            className={"image"}
-          />
+          <img src={String(element.url)} alt={caption} className={"image"} />
         ) : (
           <div className={"image-upload-placeholder"}>
             <Spinner animation="border" variant="dark" />
