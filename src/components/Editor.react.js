@@ -1,7 +1,6 @@
 import "./Editor.css";
 
 import { Editable, Slate, withReact } from "slate-react";
-import { Transforms, createEditor } from "slate";
 import {
   convertTextToLinkIfAny,
   isLinkNodeAtSelection,
@@ -14,6 +13,7 @@ import LinkEditor from "./LinkEditor.react";
 import React from "react";
 import Row from "react-bootstrap/Row";
 import Toolbar from "./Toolbar.react";
+import { createEditor } from "slate";
 import useEditorConfig from "../hooks/useEditorConfig";
 import useSelection from "../hooks/useSelection";
 
