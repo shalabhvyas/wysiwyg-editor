@@ -76,6 +76,7 @@ const Image = ({ attributes, children, element }) => {
         )}
         {isEditingCaption ? (
           <Form.Control
+            autoFocus={true}
             className={"image-caption-input"}
             size="sm"
             type="text"
