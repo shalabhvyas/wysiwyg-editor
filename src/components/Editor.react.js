@@ -19,7 +19,7 @@ import useSelection from "../hooks/useSelection";
 
 // A hack that needs to be applied to prevent selection from getting reset if some
 // input element outside takes focus. https://github.com/ianstormtaylor/slate/issues/3412
-Transforms.deselect = () => {};
+// Transforms.deselect = () => {};
 
 function Editor({ document, onChange }): JSX.Element {
   const editorRef = useRef(null);
@@ -43,6 +43,16 @@ function Editor({ document, onChange }): JSX.Element {
     [onChange, setSelection, editor]
   );
 
+  let selectionForLink = null;
+  if (isLinkNodeAtSelection(editor, selection)) {
+    selectionForLink = selection;
+  } else if (
+    selection == null &&
+    isLinkNodeAtSelection(editor, previousSelection)
+  ) {
+    selectionForLink = previousSelection;
+  }
+
   return (
     <Slate editor={editor} value={document} onChange={onChangeLocal}>
       <Container className={"editor-container"}>
@@ -57,7 +67,7 @@ function Editor({ document, onChange }): JSX.Element {
         <Row>
           <Col>
             <div className="editor" ref={editorRef}>
-              {isLinkNodeAtSelection(editor, selection) ? (
+              {selectionForLink != null ? (
                 <LinkEditor
                   editorOffsets={
                     editorRef.current != null
@@ -67,6 +77,7 @@ function Editor({ document, onChange }): JSX.Element {
                         }
                       : null
                   }
+                  selectionForLink={selectionForLink}
                 />
               ) : null}
               <Editable

@@ -9,10 +9,10 @@ import isHotkey from "is-hotkey";
 export default function useEditorConfig(editor) {
   const { isVoid } = editor;
   editor.isVoid = (element) => {
-    return ["image", "link-editor"].includes(element.type) || isVoid(element);
+    return ["image"].includes(element.type) || isVoid(element);
   };
 
-  editor.isInline = (element) => ["link", "link-editor"].includes(element.type);
+  editor.isInline = (element) => ["link"].includes(element.type);
 
   return { renderElement, renderLeaf, KeyBindings };
 }

@@ -9,14 +9,20 @@ import Card from "react-bootstrap/Card";
 import Form from "react-bootstrap/Form";
 import isUrl from "is-url";
 
-export default function LinkEditor({ editorOffsets }) {
+export default function LinkEditor({ editorOffsets, selectionForLink }) {
   const linkEditorRef = useRef(null);
   const editor = useEditor();
   const [node, path] = Editor.above(editor, {
+    at: selectionForLink,
     match: (n) => n.type === "link",
   });
 
   const [linkURL, setLinkURL] = useState(node.url);
+
+  useEffect(() => {
+    setLinkURL(node.url);
+  }, [node]);
+
   const onLinkURLChange = useCallback(
     (event) => setLinkURL(event.target.value),
     [setLinkURL]

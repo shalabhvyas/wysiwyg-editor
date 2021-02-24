@@ -120,10 +120,12 @@ export function convertTextToLinkIfAny(editor) {
 
   let end = startPointOfLastCharacter;
   start = Editor.before(editor, end, { unit: "character" });
-  const startOfText = Editor.point(editor, currentNodePath, { edge: "start" });
+  const startOfTextNode = Editor.point(editor, currentNodePath, {
+    edge: "start",
+  });
   while (
     Editor.string(editor, Editor.range(editor, start, end)) !== " " &&
-    !Point.isBefore(start, startOfText)
+    !Point.isBefore(start, startOfTextNode)
   ) {
     end = start;
     start = Editor.before(editor, end, { unit: "character" });
