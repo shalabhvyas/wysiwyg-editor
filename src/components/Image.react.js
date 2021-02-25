@@ -29,13 +29,14 @@ const Image = ({ attributes, children, element }) => {
       if (captionInput != null) {
         setCaption(captionInput);
       }
+
       Transforms.setNodes(
         editor,
         { caption: captionInput },
         { at: imageNodeEntry[1] }
       );
     },
-    [editor]
+    [editor, setCaption]
   );
 
   const onCaptionChange = useCallback(
@@ -50,17 +51,21 @@ const Image = ({ attributes, children, element }) => {
       if (!isHotkey("enter", event)) {
         return;
       }
+      event.preventDefault();
+
       applyCaptionChange(event.target.value);
       setEditingCaption(false);
     },
-    [applyCaptionChange]
+    [applyCaptionChange, setEditingCaption]
   );
 
   const onToggleCaptionEditMode = useCallback(
     (event) => {
+      const wasEditing = isEditingCaption;
       setEditingCaption(!isEditingCaption);
+      wasEditing && applyCaptionChange(caption);
     },
-    [setEditingCaption, isEditingCaption]
+    [isEditingCaption, applyCaptionChange, caption]
   );
 
   return (
@@ -85,7 +90,7 @@ const Image = ({ attributes, children, element }) => {
             className={"image-caption-input"}
             size="sm"
             type="text"
-            defaultValue={element.caption}
+            defaultValue={caption}
             onKeyDown={onKeyDown}
             onChange={onCaptionChange}
             onBlur={onToggleCaptionEditMode}
