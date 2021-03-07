@@ -2,7 +2,7 @@ import "./Editor.css";
 
 import { Editable, Slate, withReact } from "slate-react";
 import {
-  convertTextToLinkIfAny,
+  identifyLinksInTextIfAny,
   isLinkNodeAtSelection,
 } from "../utils/EditorUtils";
 import { useCallback, useMemo, useRef } from "react";
@@ -38,7 +38,7 @@ function Editor({ document, onChange }): JSX.Element {
     (doc) => {
       onChange(doc);
       setSelection(editor.selection);
-      convertTextToLinkIfAny(editor);
+      identifyLinksInTextIfAny(editor);
     },
     [onChange, setSelection, editor]
   );

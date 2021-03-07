@@ -87,12 +87,14 @@ export function isLinkNodeAtSelection(editor, selection) {
   );
 }
 
-export function convertTextToLinkIfAny(editor) {
+export function identifyLinksInTextIfAny(editor) {
+  // if selection is not collapsed, we do not proceed with the link detection.
   if (editor.selection == null || !Range.isCollapsed(editor.selection)) {
     return;
   }
 
   const [node, _] = Editor.parent(editor, editor.selection);
+  // if we are already inside a link, exit early.
   if (node.type === "link") {
     return;
   }
@@ -109,7 +111,7 @@ export function convertTextToLinkIfAny(editor) {
     unit: "character",
   });
 
-  const lastCharacter = Editor.string(
+  let lastCharacter = Editor.string(
     editor,
     Editor.range(editor, startPointOfLastCharacter, cursorPoint)
   );
@@ -119,16 +121,20 @@ export function convertTextToLinkIfAny(editor) {
   }
 
   let end = startPointOfLastCharacter;
-  start = Editor.before(editor, end, { unit: "character" });
+  start = Editor.before(editor, end, {
+    unit: "character",
+  });
+
   const startOfTextNode = Editor.point(editor, currentNodePath, {
     edge: "start",
   });
-  while (
-    Editor.string(editor, Editor.range(editor, start, end)) !== " " &&
-    !Point.isBefore(start, startOfTextNode)
-  ) {
+
+  lastCharacter = Editor.string(editor, Editor.range(editor, start, end));
+
+  while (lastCharacter !== " " && !Point.isBefore(start, startOfTextNode)) {
     end = start;
     start = Editor.before(editor, end, { unit: "character" });
+    lastCharacter = Editor.string(editor, Editor.range(editor, start, end));
   }
 
   const lastWordRange = Editor.range(editor, end, startPointOfLastCharacter);
