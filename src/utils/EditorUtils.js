@@ -22,7 +22,7 @@ export function getTextBlockStyle(editor) {
   let blockType = null;
   let nodeEntry = topLevelBlockNodesInSelection.next();
   while (!nodeEntry.done) {
-    const [node, _] = nodeEntry.value;
+    const [node] = nodeEntry.value;
     if (blockType == null) {
       blockType = node.type;
     } else if (blockType !== node.type) {
@@ -93,7 +93,7 @@ export function identifyLinksInTextIfAny(editor) {
     return;
   }
 
-  const [node, _] = Editor.parent(editor, editor.selection);
+  const [node] = Editor.parent(editor, editor.selection);
   // if we are already inside a link, exit early.
   if (node.type === "link") {
     return;

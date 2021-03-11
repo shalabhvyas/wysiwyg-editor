@@ -1,6 +1,6 @@
 import "./App.css";
 
-import Editor from "./components/Editor.react";
+import Editor from "./components/Editor";
 import ExampleDocument from "./utils/ExampleDocument";
 import Navbar from "react-bootstrap/Navbar";
 import React from "react";

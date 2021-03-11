@@ -9,10 +9,10 @@ import { useCallback, useMemo, useRef } from "react";
 
 import Col from "react-bootstrap/Col";
 import Container from "react-bootstrap/Container";
-import LinkEditor from "./LinkEditor.react";
+import LinkEditor from "./LinkEditor";
 import React from "react";
 import Row from "react-bootstrap/Row";
-import Toolbar from "./Toolbar.react";
+import Toolbar from "./Toolbar";
 import { createEditor } from "slate";
 import useEditorConfig from "../hooks/useEditorConfig";
 import useSelection from "../hooks/useSelection";
