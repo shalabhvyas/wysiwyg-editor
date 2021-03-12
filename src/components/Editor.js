@@ -13,13 +13,15 @@ import LinkEditor from "./LinkEditor";
 import React from "react";
 import Row from "react-bootstrap/Row";
 import Toolbar from "./Toolbar";
+import { atom } from "recoil";
 import { createEditor } from "slate";
 import useEditorConfig from "../hooks/useEditorConfig";
 import useSelection from "../hooks/useSelection";
 
-// A hack that needs to be applied to prevent selection from getting reset if some
-// input element outside takes focus. https://github.com/ianstormtaylor/slate/issues/3412
-// Transforms.deselect = () => {};
+export const activeCommentThreadIDAtom = atom({
+  key: "activeCommentThreadID",
+  default: null,
+});
 
 function Editor({ document, onChange }): JSX.Element {
   const editorRef = useRef(null);
