@@ -1,3 +1,6 @@
+import "./StyledText.css";
+
+import { COMMENT_THREAD_MARK_NAME } from "../utils/EditorCommentUtils";
 import React from "react";
 
 export default function StyledText({ attributes, children, leaf }) {
@@ -15,6 +18,14 @@ export default function StyledText({ attributes, children, leaf }) {
 
   if (leaf.underline) {
     children = <u {...attributes}>{children}</u>;
+  }
+
+  if (leaf[COMMENT_THREAD_MARK_NAME]) {
+    return (
+      <span {...attributes} className={"comment"}>
+        {children}
+      </span>
+    );
   }
 
   return <span {...attributes}>{children}</span>;

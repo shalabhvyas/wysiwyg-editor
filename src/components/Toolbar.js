@@ -12,6 +12,7 @@ import {
 import Button from "react-bootstrap/Button";
 import Dropdown from "react-bootstrap/Dropdown";
 import DropdownButton from "react-bootstrap/DropdownButton";
+import { insertCommentThread } from "../utils/EditorCommentUtils";
 import { useCallback } from "react";
 import { useEditor } from "slate-react";
 import useImageUploadHandler from "../hooks/useImageUploadHandler";
@@ -85,6 +86,12 @@ export default function Toolbar({ selection, previousSelection }) {
           </>
         }
       />
+      {/* Comment Button */}
+      <ToolBarButton
+        isActive={false}
+        label={<i className={`bi ${getIconForButton("comment")}`} />}
+        onMouseDown={() => insertCommentThread(editor)}
+      />
     </div>
   );
 }
@@ -132,6 +139,8 @@ function getIconForButton(style) {
       return "bi-file-image";
     case "link":
       return "bi-link-45deg";
+    case "comment":
+      return "bi-card-text";
     default:
       throw new Error(`Unhandled style in getIconForButton: ${style}`);
   }

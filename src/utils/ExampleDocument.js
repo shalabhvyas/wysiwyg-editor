@@ -1,3 +1,4 @@
+import { COMMENT_THREAD_MARK_NAME } from "./EditorCommentUtils";
 import { v4 as uuid } from "uuid";
 
 const ExampleDocument = [
@@ -13,10 +14,17 @@ const ExampleDocument = [
     type: "paragraph",
     children: [
       {
-        text:
-          "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.",
+        text: "Text 1",
+        [COMMENT_THREAD_MARK_NAME]: new Set(["thread_1"]),
       },
-      { text: "Duis aute irure dolor", bold: true },
+      {
+        text: "Text 2",
+      },
+      {
+        text: "Duis aute irure dolor",
+        bold: true,
+        [COMMENT_THREAD_MARK_NAME]: new Set(["thread_1", "thread_2"]),
+      },
       {
         text:
           " in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
@@ -24,6 +32,7 @@ const ExampleDocument = [
       {
         type: "link",
         url: "https://www.google.com",
+        [COMMENT_THREAD_MARK_NAME]: new Set(["thread_3"]),
         children: [
           { text: "Blandit aliquam etiam erat velit scelerisque in dictum." },
           {
