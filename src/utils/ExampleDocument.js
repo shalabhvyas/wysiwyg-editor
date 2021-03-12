@@ -21,9 +21,14 @@ const ExampleDocument = [
         text: "Text 2",
       },
       {
-        text: "Duis aute irure dolor",
+        text: "Text 3",
         bold: true,
-        [COMMENT_THREAD_MARK_NAME]: new Set(["thread_1", "thread_2"]),
+        [COMMENT_THREAD_MARK_NAME]: new Set(["thread_2", "thread_3"]),
+      },
+      {
+        text: "Text 4",
+        bold: true,
+        [COMMENT_THREAD_MARK_NAME]: new Set(["thread_3"]),
       },
       {
         text:
@@ -32,7 +37,7 @@ const ExampleDocument = [
       {
         type: "link",
         url: "https://www.google.com",
-        [COMMENT_THREAD_MARK_NAME]: new Set(["thread_3"]),
+        [COMMENT_THREAD_MARK_NAME]: new Set(["thread_4"]),
         children: [
           { text: "Blandit aliquam etiam erat velit scelerisque in dictum." },
           {

@@ -3,8 +3,9 @@ import "./StyledText.css";
 import { COMMENT_THREAD_MARK_NAME } from "../utils/EditorCommentUtils";
 import React from "react";
 import { activeCommentThreadIDAtom } from "./Editor";
+import classNames from "classnames";
 import useCommentedTextClickHandler from "../hooks/useCommentedTextClickHandler";
-import { useRecoilValue } from "recoil";
+import { useRecoilState } from "recoil";
 
 export default function StyledText({ attributes, children, leaf }) {
   if (leaf.bold) {
@@ -39,12 +40,24 @@ export default function StyledText({ attributes, children, leaf }) {
 
 function CommentedText(props) {
   const { commentThreads, ...otherProps } = props;
-  const onClick = useCommentedTextClickHandler(commentThreads);
-  const activeCommentThreadID = useRecoilValue(activeCommentThreadIDAtom);
-  // Create a custom selector that returns true/falsee if
-  // activeCommentThreadID from Recoil is contained in commentThreads.
+
+  const [activeCommentThreadID, setActiveCommentThreadID] = useRecoilState(
+    activeCommentThreadIDAtom
+  );
+  const onClick = useCommentedTextClickHandler(
+    commentThreads,
+    setActiveCommentThreadID
+  );
+
   return (
-    <span {...otherProps} className={"comment"} onClick={onClick}>
+    <span
+      {...otherProps}
+      className={classNames({
+        comment: true,
+        "is-active": commentThreads.has(activeCommentThreadID),
+      })}
+      onClick={onClick}
+    >
       {props.children}
     </span>
   );

@@ -1,4 +1,7 @@
 .comment {
-  /*background-color: rgb(255, 223, 153);*/
   background-color: #feeab5;
+}
+
+.comment.is-active {
+  background-color: #fcc935;
 }
