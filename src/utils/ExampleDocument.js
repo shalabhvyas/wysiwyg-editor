@@ -23,13 +23,13 @@ const ExampleDocument = [
       {
         text: "Text 3",
         bold: true,
-        [getMarkForCommentThreadID("thread_1")]: true,
         [getMarkForCommentThreadID("thread_2")]: true,
+        [getMarkForCommentThreadID("thread_3")]: true,
       },
       {
         text: "Text 4",
         bold: true,
-        [getMarkForCommentThreadID("thread_3")]: true,
+        [getMarkForCommentThreadID("thread_4")]: true,
       },
       {
         text:
