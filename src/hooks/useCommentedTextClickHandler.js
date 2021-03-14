@@ -12,11 +12,9 @@ export default function useCommentedTextClickHandler(
 
   // Find the smallest comment range and render that.
   return useCallback(() => {
-    const E = Editor;
-    const sEditor = editor;
     console.log(commentThreads);
 
-    const currentTextNode = Editor.node(editor, editor.selection);
+    const [currentTextNode] = Editor.node(editor, editor.selection);
     const commentThreadsAsArray = [...commentThreads];
 
     let newActiveCommentThreadID = commentThreadsAsArray[0];
@@ -40,27 +38,17 @@ export default function useCommentedTextClickHandler(
         commentThreadsLengthByID
       );
 
-      const [minLength, threadIDOfSmallestLength] = [
-        ...commentThreadsLengthByID.entries(),
-      ].reduce(
-        ([minLengthSoFar, smallestThreadID], [length, threadID]) => {
-          if (length < minLengthSoFar) {
-            return [threadID, length];
-          }
-          return [minLengthSoFar, smallestThreadID];
-        },
-        [
-          commentThreadsLengthByID.get(newActiveCommentThreadID),
-          newActiveCommentThreadID,
-        ]
-      );
+      let minLength = Number.POSITIVE_INFINITY;
 
-      newActiveCommentThreadID = threadIDOfSmallestLength;
-      console.log("minLength:", minLength);
+      for (let [threadID, length] of commentThreadsLengthByID) {
+        if (length < minLength) {
+          newActiveCommentThreadID = threadID;
+          minLength = length;
+        }
+      }
     }
 
-    console.log("New active thread ID:", newActiveCommentThreadID);
-    setActiveCommentThreadID(currentTextNode, newActiveCommentThreadID);
+    setActiveCommentThreadID(newActiveCommentThreadID, currentTextNode);
   }, [commentThreads, editor, setActiveCommentThreadID]);
 }
 
@@ -70,8 +58,9 @@ function updateCommentThreadLengthMap(
   nodeIterator,
   map
 ) {
-  let [nextNode, nextNodePath] = nodeIterator(editor);
-  while (Text.isText(nextNode)) {
+  let nextNodeEntry = nodeIterator(editor);
+  while (nextNodeEntry != null && Text.isText(nextNodeEntry[0])) {
+    const nextNode = nextNodeEntry[0];
     const commentThreadsOnNextNode = getCommentThreadsOnTextNode(nextNode);
     const intersection = [...commentThreadsOnNextNode].filter((x) =>
       commentThreads.has(x)
@@ -85,7 +74,7 @@ function updateCommentThreadLengthMap(
       map.set(intersection[i], map.get(intersection[i]) + nextNode.text.length);
     }
 
-    [nextNode, nextNodePath] = nodeIterator(editor, { at: nextNodePath });
+    nextNodeEntry = nodeIterator(editor, { at: nextNodeEntry[1] });
   }
 
   return map;

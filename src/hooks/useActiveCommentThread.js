@@ -12,6 +12,7 @@ export default function useActiveCommentThread() {
 
   const setActiveCommentThreadIDCallback = useCallback(
     (threadID, textNode) => {
+      console.log("Setting active to :", threadID);
       setActiveCommentThreadID(threadID);
       setCommentTextNode(textNode);
     },
