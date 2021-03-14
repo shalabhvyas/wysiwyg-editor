@@ -8,6 +8,7 @@ import {
 import { useCallback, useMemo, useRef } from "react";
 
 import Col from "react-bootstrap/Col";
+import CommentThreadPopover from "./CommentThreadPopover";
 import Container from "react-bootstrap/Container";
 import LinkEditor from "./LinkEditor";
 import React from "react";
@@ -57,6 +58,14 @@ function Editor({ document, onChange }): JSX.Element {
     setActiveCommentThreadIDCallback,
   ] = useActiveCommentThread();
 
+  const editorOffsets =
+    editorRef.current != null
+      ? {
+          x: editorRef.current.getBoundingClientRect().x,
+          y: editorRef.current.getBoundingClientRect().y,
+        }
+      : null;
+
   return (
     <Slate editor={editor} value={document} onChange={onChangeLocal}>
       <Container className={"editor-container"}>
@@ -76,15 +85,14 @@ function Editor({ document, onChange }): JSX.Element {
               <div className="editor" ref={editorRef}>
                 {selectionForLink != null ? (
                   <LinkEditor
-                    editorOffsets={
-                      editorRef.current != null
-                        ? {
-                            x: editorRef.current.getBoundingClientRect().x,
-                            y: editorRef.current.getBoundingClientRect().y,
-                          }
-                        : null
-                    }
+                    editorOffsets={editorOffsets}
                     selectionForLink={selectionForLink}
+                  />
+                ) : null}
+                {commentTextNode != null ? (
+                  <CommentThreadPopover
+                    editorOffsets={editorOffsets}
+                    textNode={commentTextNode}
                   />
                 ) : null}
                 <Editable
