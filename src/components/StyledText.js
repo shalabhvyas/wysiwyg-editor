@@ -1,9 +1,9 @@
 import "./StyledText.css";
 
-import { COMMENT_THREAD_MARK_NAME } from "../utils/EditorCommentUtils";
 import React from "react";
 import { activeCommentThreadIDAtom } from "./Editor";
 import classNames from "classnames";
+import { getCommentThreadsOnTextNode } from "../utils/EditorCommentUtils";
 import useCommentedTextClickHandler from "../hooks/useCommentedTextClickHandler";
 import { useRecoilState } from "recoil";
 
@@ -24,12 +24,11 @@ export default function StyledText({ attributes, children, leaf }) {
     children = <u {...attributes}>{children}</u>;
   }
 
-  if (leaf[COMMENT_THREAD_MARK_NAME]) {
+  const commentThreads = getCommentThreadsOnTextNode(leaf);
+
+  if (commentThreads.size > 0) {
     return (
-      <CommentedText
-        {...attributes}
-        commentThreads={leaf[COMMENT_THREAD_MARK_NAME]}
-      >
+      <CommentedText {...attributes} commentThreads={commentThreads}>
         {children}
       </CommentedText>
     );
@@ -44,6 +43,7 @@ function CommentedText(props) {
   const [activeCommentThreadID, setActiveCommentThreadID] = useRecoilState(
     activeCommentThreadIDAtom
   );
+
   const onClick = useCommentedTextClickHandler(
     commentThreads,
     setActiveCommentThreadID

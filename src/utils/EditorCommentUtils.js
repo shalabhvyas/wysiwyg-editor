@@ -1,14 +1,28 @@
 import { Editor } from "slate";
 import { v4 as uuidv4 } from "uuid";
 
-export const COMMENT_THREAD_MARK_NAME = "commentThreads";
+const COMMENT_THREAD_PREFIX = "commentThread_";
 
 export function insertCommentThread(editor) {
-  const existingCommentThreads =
-    Editor.marks(editor)[COMMENT_THREAD_MARK_NAME] ?? new Set();
-  const commentThreads = new Set([
-    ...Array.from(existingCommentThreads.values()),
-    uuidv4(),
-  ]);
-  Editor.addMark(editor, COMMENT_THREAD_MARK_NAME, commentThreads);
+  Editor.addMark(editor, getMarkForCommentThreadID(uuidv4()), true);
+}
+
+export function getMarkForCommentThreadID(threadID) {
+  return `${COMMENT_THREAD_PREFIX}${threadID}`;
+}
+
+export function getCommentThreadIDFromMark(mark) {
+  return mark.replace(COMMENT_THREAD_PREFIX, "");
+}
+
+export function isCommentThreadIDMark(mayBeMark) {
+  return mayBeMark.indexOf(COMMENT_THREAD_PREFIX) === 0;
+}
+
+export function getCommentThreadsOnTextNode(textNode) {
+  return new Set(
+    Object.keys(textNode)
+      .filter(isCommentThreadIDMark)
+      .map(getCommentThreadIDFromMark)
+  );
 }

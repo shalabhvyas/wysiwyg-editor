@@ -1,4 +1,4 @@
-import { COMMENT_THREAD_MARK_NAME } from "./EditorCommentUtils";
+import { getMarkForCommentThreadID } from "./EditorCommentUtils";
 import { v4 as uuid } from "uuid";
 
 const ExampleDocument = [
@@ -15,7 +15,7 @@ const ExampleDocument = [
     children: [
       {
         text: "Text 1",
-        [COMMENT_THREAD_MARK_NAME]: new Set(["thread_1"]),
+        [getMarkForCommentThreadID("thread_1")]: true,
       },
       {
         text: "Text 2",
@@ -23,12 +23,13 @@ const ExampleDocument = [
       {
         text: "Text 3",
         bold: true,
-        [COMMENT_THREAD_MARK_NAME]: new Set(["thread_2", "thread_3"]),
+        [getMarkForCommentThreadID("thread_1")]: true,
+        [getMarkForCommentThreadID("thread_2")]: true,
       },
       {
         text: "Text 4",
         bold: true,
-        [COMMENT_THREAD_MARK_NAME]: new Set(["thread_3"]),
+        [getMarkForCommentThreadID("thread_3")]: true,
       },
       {
         text:
@@ -37,7 +38,7 @@ const ExampleDocument = [
       {
         type: "link",
         url: "https://www.google.com",
-        [COMMENT_THREAD_MARK_NAME]: new Set(["thread_4"]),
+        [getMarkForCommentThreadID("thread_4")]: true,
         children: [
           { text: "Blandit aliquam etiam erat velit scelerisque in dictum." },
           {
