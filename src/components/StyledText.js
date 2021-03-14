@@ -1,11 +1,8 @@
 import "./StyledText.css";
 
+import CommentedText from "./CommentedText";
 import React from "react";
-import { activeCommentThreadIDAtom } from "./Editor";
-import classNames from "classnames";
 import { getCommentThreadsOnTextNode } from "../utils/EditorCommentUtils";
-import useCommentedTextClickHandler from "../hooks/useCommentedTextClickHandler";
-import { useRecoilState } from "recoil";
 
 export default function StyledText({ attributes, children, leaf }) {
   if (leaf.bold) {
@@ -35,30 +32,4 @@ export default function StyledText({ attributes, children, leaf }) {
   }
 
   return <span {...attributes}>{children}</span>;
-}
-
-function CommentedText(props) {
-  const { commentThreads, ...otherProps } = props;
-
-  const [activeCommentThreadID, setActiveCommentThreadID] = useRecoilState(
-    activeCommentThreadIDAtom
-  );
-
-  const onClick = useCommentedTextClickHandler(
-    commentThreads,
-    setActiveCommentThreadID
-  );
-
-  return (
-    <span
-      {...otherProps}
-      className={classNames({
-        comment: true,
-        "is-active": commentThreads.has(activeCommentThreadID),
-      })}
-      onClick={onClick}
-    >
-      {props.children}
-    </span>
-  );
 }

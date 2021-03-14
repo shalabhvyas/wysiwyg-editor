@@ -13,15 +13,12 @@ import LinkEditor from "./LinkEditor";
 import React from "react";
 import Row from "react-bootstrap/Row";
 import Toolbar from "./Toolbar";
-import { atom } from "recoil";
 import { createEditor } from "slate";
+import useActiveCommentThread from "../hooks/useActiveCommentThread";
 import useEditorConfig from "../hooks/useEditorConfig";
 import useSelection from "../hooks/useSelection";
 
-export const activeCommentThreadIDAtom = atom({
-  key: "activeCommentThreadID",
-  default: null,
-});
+export const SetActiveCommentThreadIDContext = React.createContext(null);
 
 function Editor({ document, onChange }): JSX.Element {
   const editorRef = useRef(null);
@@ -55,6 +52,11 @@ function Editor({ document, onChange }): JSX.Element {
     selectionForLink = previousSelection;
   }
 
+  const [
+    commentTextNode,
+    setActiveCommentThreadIDCallback,
+  ] = useActiveCommentThread();
+
   return (
     <Slate editor={editor} value={document} onChange={onChangeLocal}>
       <Container className={"editor-container"}>
@@ -68,26 +70,30 @@ function Editor({ document, onChange }): JSX.Element {
         </Row>
         <Row>
           <Col>
-            <div className="editor" ref={editorRef}>
-              {selectionForLink != null ? (
-                <LinkEditor
-                  editorOffsets={
-                    editorRef.current != null
-                      ? {
-                          x: editorRef.current.getBoundingClientRect().x,
-                          y: editorRef.current.getBoundingClientRect().y,
-                        }
-                      : null
-                  }
-                  selectionForLink={selectionForLink}
+            <SetActiveCommentThreadIDContext.Provider
+              value={setActiveCommentThreadIDCallback}
+            >
+              <div className="editor" ref={editorRef}>
+                {selectionForLink != null ? (
+                  <LinkEditor
+                    editorOffsets={
+                      editorRef.current != null
+                        ? {
+                            x: editorRef.current.getBoundingClientRect().x,
+                            y: editorRef.current.getBoundingClientRect().y,
+                          }
+                        : null
+                    }
+                    selectionForLink={selectionForLink}
+                  />
+                ) : null}
+                <Editable
+                  renderElement={renderElement}
+                  renderLeaf={renderLeaf}
+                  onKeyDown={onKeyDown}
                 />
-              ) : null}
-              <Editable
-                renderElement={renderElement}
-                renderLeaf={renderLeaf}
-                onKeyDown={onKeyDown}
-              />
-            </div>
+              </div>
+            </SetActiveCommentThreadIDContext.Provider>
           </Col>
         </Row>
       </Container>
