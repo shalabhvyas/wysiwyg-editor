@@ -1,20 +1,11 @@
 import "./App.css";
 
-import { RecoilRoot, atom } from "recoil";
-
 import Editor from "./components/Editor";
 import ExampleDocument from "./utils/ExampleDocument";
 import Navbar from "react-bootstrap/Navbar";
 import React from "react";
+import { RecoilRoot } from "recoil";
 import { useState } from "react";
-
-const commentsState = atom({
-  key: "commentsState",
-  default: new Map([
-    ["thread_1", ["comment 1 1", "comment 1 2"]],
-    ["thread_1", ["comment 2 1", "comment 2 2"]],
-  ]),
-});
 
 function App() {
   const [document, updateDocument] = useState(ExampleDocument);

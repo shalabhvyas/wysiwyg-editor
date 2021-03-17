@@ -1,6 +1,7 @@
 import "./Editor.css";
 
 import { Editable, Slate, withReact } from "slate-react";
+import { atom, atomFamily } from "recoil";
 import {
   identifyLinksInTextIfAny,
   isLinkNodeAtSelection,
@@ -20,6 +21,16 @@ import useEditorConfig from "../hooks/useEditorConfig";
 import useSelection from "../hooks/useSelection";
 
 export const SetActiveCommentThreadIDContext = React.createContext(null);
+
+export const commentThreadsState = atomFamily({
+  key: "commentThreads",
+  default: null,
+});
+
+export const commentThreadIDsState = atom({
+  key: "commentThreadIDs",
+  default: new Set([]),
+});
 
 function Editor({ document, onChange }): JSX.Element {
   const editorRef = useRef(null);

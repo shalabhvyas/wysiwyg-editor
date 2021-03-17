@@ -1,6 +1,10 @@
 import "./Toolbar.css";
 
 import {
+  commentThreadIDsState,
+  commentThreadsState,
+} from "../components/Editor";
+import {
   getActiveStyles,
   getTextBlockStyle,
   hasActiveLinkAtSelection,
@@ -16,12 +20,14 @@ import { insertCommentThread } from "../utils/EditorCommentUtils";
 import { useCallback } from "react";
 import { useEditor } from "slate-react";
 import useImageUploadHandler from "../hooks/useImageUploadHandler";
+import { useRecoilCallback } from "recoil";
 
 const PARAGRAPH_STYLES = ["h1", "h2", "h3", "h4", "paragraph", "multiple"];
 const CHARACTER_STYLES = ["bold", "italic", "underline", "code"];
 
 export default function Toolbar({ selection, previousSelection }) {
   const editor = useEditor();
+  const setter = useRecoilCallback(({ set }) => () => set, []);
 
   const onBlockTypeChange = useCallback(
     (targetType) => {
@@ -33,8 +39,12 @@ export default function Toolbar({ selection, previousSelection }) {
     [editor]
   );
 
-  // Talk about why we need previousSelection here - https://github.com/ianstormtaylor/slate/issues/3412#issuecomment-574831587
   const onImageSelected = useImageUploadHandler(editor, previousSelection);
+
+  const onInsertComment = useCallback(
+    () => insertCommentThread(editor, setter),
+    [editor, setter]
+  );
 
   const blockType = getTextBlockStyle(editor);
 
@@ -90,7 +100,7 @@ export default function Toolbar({ selection, previousSelection }) {
       <ToolBarButton
         isActive={false}
         label={<i className={`bi ${getIconForButton("comment")}`} />}
-        onMouseDown={() => insertCommentThread(editor)}
+        onMouseDown={onInsertComment}
       />
     </div>
   );

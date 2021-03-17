@@ -1,10 +1,21 @@
+import {
+  commentThreadIDsState,
+  commentThreadsState,
+} from "../components/Editor";
+
 import { Editor } from "slate";
 import { v4 as uuidv4 } from "uuid";
 
 const COMMENT_THREAD_PREFIX = "commentThread_";
 
-export function insertCommentThread(editor) {
-  Editor.addMark(editor, getMarkForCommentThreadID(uuidv4()), true);
+export function insertCommentThread(editor, setter) {
+  const threadID = uuidv4();
+  setter()(commentThreadsState, threadID, {
+    comments: [],
+    creationTime: new Date(),
+  });
+  setter(commentThreadIDsState, (ids) => new Set([...ids.values(), threadID]));
+  Editor.addMark(editor, getMarkForCommentThreadID(threadID), true);
 }
 
 export function getMarkForCommentThreadID(threadID) {
