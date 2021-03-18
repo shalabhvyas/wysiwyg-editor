@@ -10,11 +10,14 @@ const COMMENT_THREAD_PREFIX = "commentThread_";
 
 export function insertCommentThread(editor, setter) {
   const threadID = uuidv4();
-  setter()(commentThreadsState, threadID, {
+  setter()(commentThreadsState(threadID), {
     comments: [],
     creationTime: new Date(),
   });
-  setter(commentThreadIDsState, (ids) => new Set([...ids.values(), threadID]));
+  setter()(
+    commentThreadIDsState,
+    (ids) => new Set([...ids.values(), threadID])
+  );
   Editor.addMark(editor, getMarkForCommentThreadID(threadID), true);
 }
 
