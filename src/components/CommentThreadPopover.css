@@ -6,3 +6,43 @@
   min-width: 300px;
   z-index: 1;
 }
+
+.comment-list {
+  min-height: 300px;
+  max-height: 50vh;
+  overflow-y: auto;
+}
+
+.comment-row {
+  display: flex;
+  margin: 4px 16px;
+}
+
+.comment-author-name {
+  display: block;
+  font-weight: bold;
+  margin-top: 4px;
+}
+
+.comment-text {
+  max-width: 300px;
+}
+
+.comment-author-photo {
+  font-size: 24px;
+  margin-right: 4px;
+}
+
+.comment-input-wrapper {
+  border-top: 1px solid #ced4da;
+  display: flex;
+  padding: 4px;
+}
+
+.comment-input {
+  border: 0;
+}
+
+.comment-input:focus {
+  box-shadow: none;
+}

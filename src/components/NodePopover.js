@@ -8,6 +8,7 @@ export default function NodePopover({
   children,
   editorOffsets,
   className,
+  isBodyFullWidth,
 }) {
   const popoverRef = useRef(null);
   const editor = useEditor();
@@ -36,7 +37,9 @@ export default function NodePopover({
 
   return (
     <Card ref={popoverRef} className={className}>
-      <Card.Body>{children}</Card.Body>
+      <Card.Body style={isBodyFullWidth ? { padding: 0 } : undefined}>
+        {children}
+      </Card.Body>
     </Card>
   );
 }
