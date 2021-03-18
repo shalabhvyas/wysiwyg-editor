@@ -1,3 +1,4 @@
+import { Editor } from "slate";
 import { activeCommentThreadIDAtom } from "../utils/CommentState";
 import classNames from "classnames";
 import { getSmallestCommentThreadAtTextNode } from "../utils/EditorCommentUtils";
@@ -13,6 +14,9 @@ export default function CommentedText(props) {
   );
 
   const onClick = () => {
+    // There is a bug here that causes the `textNode` to be `null` for
+    // some combination of events as you keep adding overlapping comments.
+    const E = Editor;
     const textNode = getTextNodeAtSelection(editor);
     setActiveCommentThreadID(
       getSmallestCommentThreadAtTextNode(editor, textNode)

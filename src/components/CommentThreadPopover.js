@@ -10,7 +10,6 @@ import { useRecoilState, useSetRecoilState } from "recoil";
 import Button from "react-bootstrap/Button";
 import Form from "react-bootstrap/Form";
 import NodePopover from "./NodePopover";
-import { getSmallestCommentThreadAtTextNode } from "../utils/EditorCommentUtils";
 import { getTextNodeAtSelection } from "../utils/EditorUtils";
 import { useEditor } from "slate-react";
 
@@ -47,6 +46,7 @@ export default function CommentThreadPopover({
 
   useEffect(() => {
     return () => {
+      console.log("Unmounting popover");
       setActiveCommentThreadID(null);
     };
   }, [setActiveCommentThreadID]);

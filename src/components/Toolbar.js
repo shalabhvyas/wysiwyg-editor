@@ -1,10 +1,6 @@
 import "./Toolbar.css";
 
 import {
-  commentThreadIDsState,
-  commentThreadsState,
-} from "../components/Editor";
-import {
   getActiveStyles,
   getTextBlockStyle,
   hasActiveLinkAtSelection,

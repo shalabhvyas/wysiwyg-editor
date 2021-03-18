@@ -37,6 +37,9 @@ export function isCommentThreadIDMark(mayBeMark) {
 }
 
 export function getCommentThreadsOnTextNode(textNode) {
+  if (textNode == null) {
+    debugger;
+  }
   return new Set(
     Object.keys(textNode)
       .filter(isCommentThreadIDMark)
@@ -46,6 +49,7 @@ export function getCommentThreadsOnTextNode(textNode) {
 
 export function isCommentAtSelection(editor, selection) {
   const textNode = getTextNodeAtSelection(editor, selection);
+  console.log(textNode);
   return textNode != null && getCommentThreadsOnTextNode(textNode).size > 0;
 }
 

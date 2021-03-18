@@ -18,7 +18,7 @@ import { activeCommentThreadIDAtom } from "../utils/CommentState";
 import { createEditor } from "slate";
 import { isCommentAtSelection } from "../utils/EditorCommentUtils";
 import useEditorConfig from "../hooks/useEditorConfig";
-import { useRecoilState } from "recoil";
+import { useRecoilValue } from "recoil";
 import useSelection from "../hooks/useSelection";
 
 function Editor({ document, onChange }): JSX.Element {
@@ -32,9 +32,7 @@ function Editor({ document, onChange }): JSX.Element {
   );
 
   const [previousSelection, selection, setSelection] = useSelection(editor);
-  const [activeCommentThreadID, setActiveCommentThreadID] = useRecoilState(
-    activeCommentThreadIDAtom
-  );
+  const activeCommentThreadID = useRecoilValue(activeCommentThreadIDAtom);
 
   // we update selection here because Slate fires an onChange even on pure selection change.
   const onChangeLocal = useCallback(
@@ -42,12 +40,8 @@ function Editor({ document, onChange }): JSX.Element {
       onChange(doc);
       setSelection(editor.selection);
       identifyLinksInTextIfAny(editor);
-
-      if (!isCommentAtSelection(editor)) {
-        setActiveCommentThreadID(null);
-      }
     },
-    [onChange, setSelection, editor, setActiveCommentThreadID]
+    [onChange, setSelection, editor]
   );
 
   let selectionForLink = null;
@@ -69,6 +63,15 @@ function Editor({ document, onChange }): JSX.Element {
   ) {
     selectionForActiveComment = previousSelection;
   }
+
+  console.log(
+    "selection",
+    selection,
+    "previousSelection",
+    previousSelection,
+    "selectionForActiveComment",
+    selectionForActiveComment
+  );
 
   const editorOffsets =
     editorRef.current != null
