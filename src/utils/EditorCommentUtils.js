@@ -1,7 +1,4 @@
-import {
-  commentThreadIDsState,
-  commentThreadsState,
-} from "../components/Editor";
+import { commentThreadIDsState, commentThreadsState } from "./CommentState";
 
 import { Editor } from "slate";
 import { v4 as uuidv4 } from "uuid";

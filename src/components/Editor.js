@@ -1,7 +1,6 @@
 import "./Editor.css";
 
 import { Editable, Slate, withReact } from "slate-react";
-import { atom, atomFamily } from "recoil";
 import {
   identifyLinksInTextIfAny,
   isLinkNodeAtSelection,
@@ -14,23 +13,12 @@ import Container from "react-bootstrap/Container";
 import LinkEditor from "./LinkEditor";
 import React from "react";
 import Row from "react-bootstrap/Row";
+import { SetActiveCommentThreadIDContext } from "../utils/CommentState";
 import Toolbar from "./Toolbar";
 import { createEditor } from "slate";
 import useActiveCommentThread from "../hooks/useActiveCommentThread";
 import useEditorConfig from "../hooks/useEditorConfig";
 import useSelection from "../hooks/useSelection";
-
-export const SetActiveCommentThreadIDContext = React.createContext(null);
-
-export const commentThreadsState = atomFamily({
-  key: "commentThreads",
-  default: null,
-});
-
-export const commentThreadIDsState = atom({
-  key: "commentThreadIDs",
-  default: new Set([]),
-});
 
 function Editor({ document, onChange }): JSX.Element {
   const editorRef = useRef(null);

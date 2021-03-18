@@ -1,5 +1,5 @@
-import { SetActiveCommentThreadIDContext } from "./Editor";
-import { activeCommentThreadIDAtom } from "../hooks/useActiveCommentThread";
+import { SetActiveCommentThreadIDContext } from "../utils/CommentState";
+import { activeCommentThreadIDAtom } from "../utils/CommentState";
 import classNames from "classnames";
 import useCommentedTextClickHandler from "../hooks/useCommentedTextClickHandler";
 import { useContext } from "react";
