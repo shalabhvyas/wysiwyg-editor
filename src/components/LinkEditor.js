@@ -1,13 +1,13 @@
 import "./LinkEditor.css";
 
 import { Editor, Transforms } from "slate";
-import { ReactEditor, useEditor } from "slate-react";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 
 import Button from "react-bootstrap/Button";
 import Form from "react-bootstrap/Form";
 import NodePopover from "./NodePopover";
 import isUrl from "is-url";
+import { useEditor } from "slate-react";
 
 export default function LinkEditor({ editorOffsets, selectionForLink }) {
   const editor = useEditor();

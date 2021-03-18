@@ -13,11 +13,12 @@ import Container from "react-bootstrap/Container";
 import LinkEditor from "./LinkEditor";
 import React from "react";
 import Row from "react-bootstrap/Row";
-import { SetActiveCommentThreadIDContext } from "../utils/CommentState";
 import Toolbar from "./Toolbar";
+import { activeCommentThreadIDAtom } from "../utils/CommentState";
 import { createEditor } from "slate";
-import useActiveCommentThread from "../hooks/useActiveCommentThread";
+import { isCommentAtSelection } from "../utils/EditorCommentUtils";
 import useEditorConfig from "../hooks/useEditorConfig";
+import { useRecoilState } from "recoil";
 import useSelection from "../hooks/useSelection";
 
 function Editor({ document, onChange }): JSX.Element {
@@ -31,6 +32,9 @@ function Editor({ document, onChange }): JSX.Element {
   );
 
   const [previousSelection, selection, setSelection] = useSelection(editor);
+  const [activeCommentThreadID, setActiveCommentThreadID] = useRecoilState(
+    activeCommentThreadIDAtom
+  );
 
   // we update selection here because Slate fires an onChange even on pure selection change.
   const onChangeLocal = useCallback(
@@ -38,8 +42,12 @@ function Editor({ document, onChange }): JSX.Element {
       onChange(doc);
       setSelection(editor.selection);
       identifyLinksInTextIfAny(editor);
+
+      if (!isCommentAtSelection(editor)) {
+        setActiveCommentThreadID(null);
+      }
     },
-    [onChange, setSelection, editor]
+    [onChange, setSelection, editor, setActiveCommentThreadID]
   );
 
   let selectionForLink = null;
@@ -52,10 +60,15 @@ function Editor({ document, onChange }): JSX.Element {
     selectionForLink = previousSelection;
   }
 
-  const [
-    commentTextNode,
-    setActiveCommentThreadIDCallback,
-  ] = useActiveCommentThread();
+  let selectionForActiveComment = null;
+  if (isCommentAtSelection(editor, selection)) {
+    selectionForActiveComment = selection;
+  } else if (
+    selection == null &&
+    isCommentAtSelection(editor, previousSelection)
+  ) {
+    selectionForActiveComment = previousSelection;
+  }
 
   const editorOffsets =
     editorRef.current != null
@@ -78,29 +91,27 @@ function Editor({ document, onChange }): JSX.Element {
         </Row>
         <Row>
           <Col>
-            <SetActiveCommentThreadIDContext.Provider
-              value={setActiveCommentThreadIDCallback}
-            >
-              <div className="editor" ref={editorRef}>
-                {selectionForLink != null ? (
-                  <LinkEditor
-                    editorOffsets={editorOffsets}
-                    selectionForLink={selectionForLink}
-                  />
-                ) : null}
-                {commentTextNode != null ? (
-                  <CommentThreadPopover
-                    editorOffsets={editorOffsets}
-                    textNode={commentTextNode}
-                  />
-                ) : null}
-                <Editable
-                  renderElement={renderElement}
-                  renderLeaf={renderLeaf}
-                  onKeyDown={onKeyDown}
+            <div className="editor" ref={editorRef}>
+              {selectionForLink != null ? (
+                <LinkEditor
+                  editorOffsets={editorOffsets}
+                  selectionForLink={selectionForLink}
                 />
-              </div>
-            </SetActiveCommentThreadIDContext.Provider>
+              ) : null}
+              {activeCommentThreadID != null &&
+              selectionForActiveComment != null ? (
+                <CommentThreadPopover
+                  editorOffsets={editorOffsets}
+                  threadID={activeCommentThreadID}
+                  selectionForActiveComment={selectionForActiveComment}
+                />
+              ) : null}
+              <Editable
+                renderElement={renderElement}
+                renderLeaf={renderLeaf}
+                onKeyDown={onKeyDown}
+              />
+            </div>
           </Col>
         </Row>
       </Container>

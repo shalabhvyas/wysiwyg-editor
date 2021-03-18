@@ -164,3 +164,16 @@ function createLinkForRange(editor, range, linkText, linkURL, isInsertion) {
         { split: true, at: range }
       );
 }
+
+export function getTextNodeAtSelection(editor, selection) {
+  const selectionForNode = selection ?? editor.selection;
+
+  if (selectionForNode == null) {
+    return null;
+  }
+
+  const textNodeEntry = Editor.node(editor, selectionForNode);
+  return textNodeEntry != null && Text.isText(textNodeEntry[0])
+    ? textNodeEntry[0]
+    : null;
+}

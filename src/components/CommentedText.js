@@ -1,19 +1,23 @@
-import { SetActiveCommentThreadIDContext } from "../utils/CommentState";
 import { activeCommentThreadIDAtom } from "../utils/CommentState";
 import classNames from "classnames";
-import useCommentedTextClickHandler from "../hooks/useCommentedTextClickHandler";
-import { useContext } from "react";
-import { useRecoilValue } from "recoil";
+import { getSmallestCommentThreadAtTextNode } from "../utils/EditorCommentUtils";
+import { getTextNodeAtSelection } from "../utils/EditorUtils";
+import { useEditor } from "slate-react";
+import { useRecoilState } from "recoil";
 
 export default function CommentedText(props) {
+  const editor = useEditor();
   const { commentThreads, ...otherProps } = props;
-  const setActiveCommentThreadID = useContext(SetActiveCommentThreadIDContext);
-  const activeCommentThreadID = useRecoilValue(activeCommentThreadIDAtom);
-
-  const onClick = useCommentedTextClickHandler(
-    commentThreads,
-    setActiveCommentThreadID
+  const [activeCommentThreadID, setActiveCommentThreadID] = useRecoilState(
+    activeCommentThreadIDAtom
   );
+
+  const onClick = () => {
+    const textNode = getTextNodeAtSelection(editor);
+    setActiveCommentThreadID(
+      getSmallestCommentThreadAtTextNode(editor, textNode)
+    );
+  };
 
   return (
     <span

@@ -1,30 +1,36 @@
 import "./CommentThreadPopover.css";
 
 import {
-  activeCommentThreadDataSelector,
+  activeCommentThreadIDAtom,
   commentThreadsState,
 } from "../utils/CommentState";
-import { useCallback, useState } from "react";
-import { useRecoilValue, useSetRecoilState } from "recoil";
+import { useCallback, useEffect, useState } from "react";
+import { useRecoilState, useSetRecoilState } from "recoil";
 
 import Button from "react-bootstrap/Button";
 import Form from "react-bootstrap/Form";
-import InputGroup from "react-bootstrap/InputGroup";
 import NodePopover from "./NodePopover";
+import { getSmallestCommentThreadAtTextNode } from "../utils/EditorCommentUtils";
+import { getTextNodeAtSelection } from "../utils/EditorUtils";
+import { useEditor } from "slate-react";
 
-export default function CommentThreadPopover({ editorOffsets, textNode }) {
-  const {
-    threadID,
-    threadData: { comments },
-  } = useRecoilValue(activeCommentThreadDataSelector);
-  const setActiveCommentThreadData = useSetRecoilState(
+export default function CommentThreadPopover({
+  editorOffsets,
+  selectionForActiveComment,
+  threadID,
+}) {
+  const editor = useEditor();
+  const textNode = getTextNodeAtSelection(editor, selectionForActiveComment);
+  const setActiveCommentThreadID = useSetRecoilState(activeCommentThreadIDAtom);
+
+  const [{ comments }, setCommentThreadData] = useRecoilState(
     commentThreadsState(threadID)
   );
 
   const [commentText, setCommentText] = useState("");
 
   const onClick = useCallback(() => {
-    setActiveCommentThreadData((threadData) => ({
+    setCommentThreadData((threadData) => ({
       ...threadData,
       comments: [
         ...threadData.comments,
@@ -32,12 +38,18 @@ export default function CommentThreadPopover({ editorOffsets, textNode }) {
       ],
     }));
     setCommentText("");
-  }, [commentText, setActiveCommentThreadData, setCommentText]);
+  }, [commentText, setCommentThreadData]);
 
   const onCommentTextChange = useCallback(
     (event) => setCommentText(event.target.value),
     [setCommentText]
   );
+
+  useEffect(() => {
+    return () => {
+      setActiveCommentThreadID(null);
+    };
+  }, [setActiveCommentThreadID]);
 
   return (
     <NodePopover
