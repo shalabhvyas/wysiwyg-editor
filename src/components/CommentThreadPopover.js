@@ -7,21 +7,21 @@ import {
 import { useCallback, useState } from "react";
 import { useRecoilValue, useSetRecoilState } from "recoil";
 
+import Button from "react-bootstrap/Button";
+import Form from "react-bootstrap/Form";
+import InputGroup from "react-bootstrap/InputGroup";
 import NodePopover from "./NodePopover";
 
 export default function CommentThreadPopover({ editorOffsets, textNode }) {
-  const activeCommentThreadData = useRecoilValue(
-    activeCommentThreadDataSelector
-  );
-  const [commentText, setCommentText] = useState("");
   const {
     threadID,
     threadData: { comments },
-  } = activeCommentThreadData;
-
+  } = useRecoilValue(activeCommentThreadDataSelector);
   const setActiveCommentThreadData = useSetRecoilState(
     commentThreadsState(threadID)
   );
+
+  const [commentText, setCommentText] = useState("");
 
   const onClick = useCallback(() => {
     setActiveCommentThreadData((threadData) => ({
@@ -31,7 +31,13 @@ export default function CommentThreadPopover({ editorOffsets, textNode }) {
         { text: commentText, author: "Shalabh", creationTime: new Date() },
       ],
     }));
-  }, [commentText, setActiveCommentThreadData]);
+    setCommentText("");
+  }, [commentText, setActiveCommentThreadData, setCommentText]);
+
+  const onCommentTextChange = useCallback(
+    (event) => setCommentText(event.target.value),
+    [setCommentText]
+  );
 
   return (
     <NodePopover
@@ -39,14 +45,31 @@ export default function CommentThreadPopover({ editorOffsets, textNode }) {
       node={textNode}
       className={"comment-thread-popover"}
     >
-      {comments.map(({ text, author }) => (
-        <>
+      {comments.map(({ text, author }, index) => (
+        <div key={index}>
           <div>{text}</div>
           <div>{author}</div>
-        </>
+        </div>
       ))}
-      <input type="text" value={commentText} onClick={setCommentText} />
-      <button onClick={onClick}>Add</button>
+      <div>
+        <InputGroup>
+          <Form.Control
+            autoFocus={true}
+            type="text"
+            value={commentText}
+            onChange={onCommentTextChange}
+          />
+          <InputGroup.Append>
+            <Button
+              variant="outline-primary"
+              active={commentText.length > 0}
+              onClick={onClick}
+            >
+              <i className={`bi bi-arrow-right-circle-fill`} />
+            </Button>
+          </InputGroup.Append>
+        </InputGroup>
+      </div>
     </NodePopover>
   );
 }

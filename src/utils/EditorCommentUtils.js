@@ -1,4 +1,8 @@
-import { commentThreadIDsState, commentThreadsState } from "./CommentState";
+import {
+  activeCommentThreadIDAtom,
+  commentThreadIDsState,
+  commentThreadsState,
+} from "./CommentState";
 
 import { Editor } from "slate";
 import { v4 as uuidv4 } from "uuid";
@@ -15,6 +19,7 @@ export function insertCommentThread(editor, setter) {
     commentThreadIDsState,
     (ids) => new Set([...ids.values(), threadID])
   );
+  setter()(activeCommentThreadIDAtom, threadID);
   Editor.addMark(editor, getMarkForCommentThreadID(threadID), true);
 }
 
