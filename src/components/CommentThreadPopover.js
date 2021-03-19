@@ -5,7 +5,7 @@ import {
   commentThreadsState,
 } from "../utils/CommentState";
 import { useCallback, useEffect, useState } from "react";
-import { useRecoilState, useSetRecoilState } from "recoil";
+import { useRecoilStateLoadable, useSetRecoilState } from "recoil";
 
 import Button from "react-bootstrap/Button";
 import Form from "react-bootstrap/Form";
@@ -15,17 +15,18 @@ import { useEditor } from "slate-react";
 
 export default function CommentThreadPopover({
   editorOffsets,
-  selectionForActiveComment,
+  selectionForCommentPopover,
   threadID,
 }) {
   const editor = useEditor();
   const textNode = getFirstTextNodeAtSelection(
     editor,
-    selectionForActiveComment
+    selectionForCommentPopover
   );
+
   const setActiveCommentThreadID = useSetRecoilState(activeCommentThreadIDAtom);
 
-  const [{ comments }, setCommentThreadData] = useRecoilState(
+  const [threadDataLoadable, setCommentThreadData] = useRecoilStateLoadable(
     commentThreadsState(threadID)
   );
 
@@ -60,28 +61,34 @@ export default function CommentThreadPopover({
       node={textNode}
       className={"comment-thread-popover"}
     >
-      <div className={"comment-list"}>
-        {comments.map((comment, index) => (
-          <CommentRow key={index} comment={comment} />
-        ))}
-      </div>
-      <div className={"comment-input-wrapper"}>
-        <Form.Control
-          autoFocus={true}
-          bsPrefix={"comment-input form-control"}
-          placeholder={"Type a comment"}
-          type="text"
-          value={commentText}
-          onChange={onCommentTextChange}
-        />
-        <Button
-          variant="primary"
-          disabled={commentText.length === 0}
-          onClick={onClick}
-        >
-          Comment
-        </Button>
-      </div>
+      {threadDataLoadable.state === "hasValue" ? (
+        <>
+          <div className={"comment-list"}>
+            {threadDataLoadable.contents.comments.map((comment, index) => (
+              <CommentRow key={index} comment={comment} />
+            ))}
+          </div>
+          <div className={"comment-input-wrapper"}>
+            <Form.Control
+              autoFocus={true}
+              bsPrefix={"comment-input form-control"}
+              placeholder={"Type a comment"}
+              type="text"
+              value={commentText}
+              onChange={onCommentTextChange}
+            />
+            <Button
+              variant="primary"
+              disabled={commentText.length === 0}
+              onClick={onClick}
+            >
+              Comment
+            </Button>
+          </div>
+        </>
+      ) : (
+        "Loading"
+      )}
     </NodePopover>
   );
 }

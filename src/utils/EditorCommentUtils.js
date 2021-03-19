@@ -118,7 +118,7 @@ function updateCommentThreadLengthMap(
   return map;
 }
 
-export function initializeStateWithAllCommentThreads(
+export async function initializeStateWithAllCommentThreads(
   editor,
   setCommentThreadData
 ) {
@@ -138,11 +138,9 @@ export function initializeStateWithAllCommentThreads(
     textNodeEntry = textNodesWithComments.next().value;
   }
 
-  console.log(commentThreads);
-
   // Fetch comment threads from server and use the setter to set them here. For the sake
   // of the article, we just set them to some default so we know the initialization works.
-  [...commentThreads.entries()].forEach((id) =>
+  Array.from(commentThreads).forEach((id) =>
     setCommentThreadData(id, {
       comments: [
         {

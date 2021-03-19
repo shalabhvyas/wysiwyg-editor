@@ -4,6 +4,7 @@ import { Editable, Slate, withReact } from "slate-react";
 import React, { useEffect } from "react";
 import {
   activeCommentThreadIDAtom,
+  commentThreadIDsState,
   commentThreadsState,
 } from "../utils/CommentState";
 import {
@@ -39,9 +40,13 @@ function Editor({ document, onChange }): JSX.Element {
 
   const [previousSelection, selection, setSelection] = useSelection(editor);
   const activeCommentThreadID = useRecoilValue(activeCommentThreadIDAtom);
-  const setCommentThreadData = useRecoilCallback(({ set }, id, threadData) => {
-    set(commentThreadsState(id), threadData);
-  });
+  const setCommentThreadData = useRecoilCallback(
+    ({ set }) => (id, threadData) => {
+      set(commentThreadIDsState, (ids) => new Set([...Array.from(ids), id]));
+      set(commentThreadsState(id), threadData);
+    },
+    []
+  );
 
   // we update selection here because Slate fires an onChange even on pure selection change.
   const onChangeLocal = useCallback(
@@ -83,7 +88,7 @@ function Editor({ document, onChange }): JSX.Element {
 
   useEffect(() => {
     initializeStateWithAllCommentThreads(editor, setCommentThreadData);
-  }, [editor]);
+  }, [editor, setCommentThreadData]);
 
   return (
     <Slate editor={editor} value={document} onChange={onChangeLocal}>
