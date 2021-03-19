@@ -10,7 +10,7 @@ import { useRecoilState, useSetRecoilState } from "recoil";
 import Button from "react-bootstrap/Button";
 import Form from "react-bootstrap/Form";
 import NodePopover from "./NodePopover";
-import { getTextNodeAtSelection } from "../utils/EditorUtils";
+import { getFirstTextNodeAtSelection } from "../utils/EditorUtils";
 import { useEditor } from "slate-react";
 
 export default function CommentThreadPopover({
@@ -19,7 +19,10 @@ export default function CommentThreadPopover({
   threadID,
 }) {
   const editor = useEditor();
-  const textNode = getTextNodeAtSelection(editor, selectionForActiveComment);
+  const textNode = getFirstTextNodeAtSelection(
+    editor,
+    selectionForActiveComment
+  );
   const setActiveCommentThreadID = useSetRecoilState(activeCommentThreadIDAtom);
 
   const [{ comments }, setCommentThreadData] = useRecoilState(

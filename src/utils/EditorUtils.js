@@ -165,14 +165,18 @@ function createLinkForRange(editor, range, linkText, linkURL, isInsertion) {
       );
 }
 
-export function getTextNodeAtSelection(editor, selection) {
+export function getFirstTextNodeAtSelection(editor, selection) {
   const selectionForNode = selection ?? editor.selection;
 
   if (selectionForNode == null) {
     return null;
   }
 
-  const textNodeEntry = Editor.node(editor, selectionForNode);
+  const textNodeEntry = Editor.nodes(editor, {
+    at: selectionForNode,
+    mode: "lowest",
+  }).next().value;
+
   return textNodeEntry != null && Text.isText(textNodeEntry[0])
     ? textNodeEntry[0]
     : null;

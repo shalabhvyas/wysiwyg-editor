@@ -5,7 +5,7 @@ import {
   commentThreadsState,
 } from "./CommentState";
 
-import { getTextNodeAtSelection } from "./EditorUtils";
+import { getFirstTextNodeAtSelection } from "./EditorUtils";
 import { v4 as uuidv4 } from "uuid";
 
 const COMMENT_THREAD_PREFIX = "commentThread_";
@@ -48,8 +48,7 @@ export function getCommentThreadsOnTextNode(textNode) {
 }
 
 export function isCommentAtSelection(editor, selection) {
-  const textNode = getTextNodeAtSelection(editor, selection);
-  console.log(textNode);
+  const textNode = getFirstTextNodeAtSelection(editor, selection);
   return textNode != null && getCommentThreadsOnTextNode(textNode).size > 0;
 }
 

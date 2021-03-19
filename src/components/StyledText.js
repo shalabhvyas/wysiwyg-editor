@@ -25,7 +25,11 @@ export default function StyledText({ attributes, children, leaf }) {
 
   if (commentThreads.size > 0) {
     return (
-      <CommentedText {...attributes} commentThreads={commentThreads}>
+      <CommentedText
+        {...attributes}
+        commentThreads={commentThreads}
+        textNode={leaf}
+      >
         {children}
       </CommentedText>
     );
