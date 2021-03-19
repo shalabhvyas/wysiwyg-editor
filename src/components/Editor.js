@@ -20,6 +20,7 @@ import { useRecoilCallback, useRecoilValue } from "recoil";
 
 import Col from "react-bootstrap/Col";
 import CommentThreadPopover from "./CommentThreadPopover";
+import CommentsSidebar from "./CommentsSidebar";
 import Container from "react-bootstrap/Container";
 import LinkEditor from "./LinkEditor";
 import Row from "react-bootstrap/Row";
@@ -92,38 +93,49 @@ function Editor({ document, onChange }): JSX.Element {
 
   return (
     <Slate editor={editor} value={document} onChange={onChangeLocal}>
-      <Container className={"editor-container"}>
+      <Container className={"editor-wrapper"} fluid>
         <Row>
           <Col>
-            <Toolbar
-              selection={selection}
-              previousSelection={previousSelection}
-            />
+            <Container className={"editor-container"}>
+              <Row>
+                <Col>
+                  <Toolbar
+                    selection={selection}
+                    previousSelection={previousSelection}
+                  />
+                </Col>
+              </Row>
+              <Row>
+                <Col>
+                  <div className="editor" ref={editorRef}>
+                    {selectionForLink != null ? (
+                      <LinkEditor
+                        editorOffsets={editorOffsets}
+                        selectionForLink={selectionForLink}
+                      />
+                    ) : null}
+                    {activeCommentThreadID != null &&
+                    selectionForCommentPopover != null ? (
+                      <CommentThreadPopover
+                        editorOffsets={editorOffsets}
+                        threadID={activeCommentThreadID}
+                        selectionForCommentPopover={selectionForCommentPopover}
+                      />
+                    ) : null}
+                    <Editable
+                      renderElement={renderElement}
+                      renderLeaf={renderLeaf}
+                      onKeyDown={onKeyDown}
+                    />
+                  </div>
+                </Col>
+              </Row>
+            </Container>
           </Col>
-        </Row>
-        <Row>
-          <Col>
-            <div className="editor" ref={editorRef}>
-              {selectionForLink != null ? (
-                <LinkEditor
-                  editorOffsets={editorOffsets}
-                  selectionForLink={selectionForLink}
-                />
-              ) : null}
-              {activeCommentThreadID != null &&
-              selectionForCommentPopover != null ? (
-                <CommentThreadPopover
-                  editorOffsets={editorOffsets}
-                  threadID={activeCommentThreadID}
-                  selectionForCommentPopover={selectionForCommentPopover}
-                />
-              ) : null}
-              <Editable
-                renderElement={renderElement}
-                renderLeaf={renderLeaf}
-                onKeyDown={onKeyDown}
-              />
-            </div>
+          <Col className={"sidebar-wrapper"}>
+            <Container>
+              <CommentsSidebar />
+            </Container>
           </Col>
         </Row>
       </Container>

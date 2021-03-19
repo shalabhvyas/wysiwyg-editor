@@ -1,4 +1,4 @@
-import { atom, atomFamily } from "recoil";
+import { atom, atomFamily, selector } from "recoil";
 
 import React from "react";
 
@@ -17,4 +17,12 @@ export const commentThreadIDsState = atom({
 export const activeCommentThreadIDAtom = atom({
   key: "activeCommentThreadID",
   default: null,
+});
+
+export const allCommentThreadsState = selector({
+  key: "allCommentThreads",
+  get: ({ get }) => {
+    const threadIDs = get(commentThreadIDsState);
+    return new Map(threadIDs.map((id) => [id, get(commentThreadsState(id))]));
+  },
 });

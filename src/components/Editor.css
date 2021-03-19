@@ -1,3 +1,16 @@
+.editor-wrapper {
+  padding: 0;
+}
+
+.sidebar-wrapper {
+  max-width: 400px;
+  background-color: #fff;
+}
+
+.sidebar-wrapper > .container {
+  padding: 0;
+}
+
 .editor-container {
   background: #fff;
   box-shadow: rgb(0 0 0 / 10%) 1px 1px 0px inset,

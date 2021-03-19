@@ -8,6 +8,7 @@ import { useCallback, useEffect, useState } from "react";
 import { useRecoilStateLoadable, useSetRecoilState } from "recoil";
 
 import Button from "react-bootstrap/Button";
+import CommentRow from "./CommentRow";
 import Form from "react-bootstrap/Form";
 import NodePopover from "./NodePopover";
 import { getFirstTextNodeAtSelection } from "../utils/EditorUtils";
@@ -90,19 +91,5 @@ export default function CommentThreadPopover({
         "Loading"
       )}
     </NodePopover>
-  );
-}
-
-function CommentRow({ comment: { author, text, creationTime } }) {
-  return (
-    <div className={"comment-row"}>
-      <div className="comment-author-photo">
-        <i className="bi bi-person-circle comment-author-photo"></i>
-      </div>
-      <div>
-        <span className="comment-author-name">{author}</span>
-        <div className="comment-text">{text}</div>
-      </div>
-    </div>
   );
 }
