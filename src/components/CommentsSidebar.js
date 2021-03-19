@@ -17,15 +17,18 @@ export default function CommentsSidebar(params) {
   const allCommentThreadIDs = useRecoilValue(commentThreadIDsState);
 
   return (
-    <>
-      {Array.from(allCommentThreadIDs).map((id) => (
-        <Row key={id}>
-          <Col>
-            <CommentThread id={id} />
-          </Col>
-        </Row>
-      ))}
-    </>
+    <Card className={"comments-sidebar"}>
+      <Card.Header>Comments</Card.Header>
+      <Card.Body>
+        {Array.from(allCommentThreadIDs).map((id) => (
+          <Row key={id}>
+            <Col>
+              <CommentThread id={id} />
+            </Col>
+          </Row>
+        ))}
+      </Card.Body>
+    </Card>
   );
 }
 
@@ -35,6 +38,11 @@ function CommentThread({ id }) {
   const onBtnClick = useCallback(() => {
     setShouldShowReplies(!shouldShowReplies);
   }, [shouldShowReplies, setShouldShowReplies]);
+
+  if (comments.length === 0) {
+    return null;
+  }
+
   const [firstComment, ...otherComments] = comments;
   return (
     <Card body={true} className={"comment-thread-container"}>
@@ -45,7 +53,12 @@ function CommentThread({ id }) {
           ))
         : null}
       {comments.length > 1 ? (
-        <Button variant="primary" onClick={onBtnClick}>
+        <Button
+          className={"show-replies-btn"}
+          size="sm"
+          variant="outline-primary"
+          onClick={onBtnClick}
+        >
           {shouldShowReplies ? "Hide Replies" : "Show Replies"}
         </Button>
       ) : null}

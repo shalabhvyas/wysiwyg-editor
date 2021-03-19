@@ -93,52 +93,46 @@ function Editor({ document, onChange }): JSX.Element {
 
   return (
     <Slate editor={editor} value={document} onChange={onChangeLocal}>
-      <Container className={"editor-wrapper"} fluid>
-        <Row>
-          <Col>
-            <Container className={"editor-container"}>
-              <Row>
-                <Col>
-                  <Toolbar
-                    selection={selection}
-                    previousSelection={previousSelection}
+      <div className={"editor-wrapper"} fluid>
+        <Container className={"editor-container"}>
+          <Row>
+            <Col>
+              <Toolbar
+                selection={selection}
+                previousSelection={previousSelection}
+              />
+            </Col>
+          </Row>
+          <Row>
+            <Col>
+              <div className="editor" ref={editorRef}>
+                {selectionForLink != null ? (
+                  <LinkEditor
+                    editorOffsets={editorOffsets}
+                    selectionForLink={selectionForLink}
                   />
-                </Col>
-              </Row>
-              <Row>
-                <Col>
-                  <div className="editor" ref={editorRef}>
-                    {selectionForLink != null ? (
-                      <LinkEditor
-                        editorOffsets={editorOffsets}
-                        selectionForLink={selectionForLink}
-                      />
-                    ) : null}
-                    {activeCommentThreadID != null &&
-                    selectionForCommentPopover != null ? (
-                      <CommentThreadPopover
-                        editorOffsets={editorOffsets}
-                        threadID={activeCommentThreadID}
-                        selectionForCommentPopover={selectionForCommentPopover}
-                      />
-                    ) : null}
-                    <Editable
-                      renderElement={renderElement}
-                      renderLeaf={renderLeaf}
-                      onKeyDown={onKeyDown}
-                    />
-                  </div>
-                </Col>
-              </Row>
-            </Container>
-          </Col>
-          <Col className={"sidebar-wrapper"}>
-            <Container>
-              <CommentsSidebar />
-            </Container>
-          </Col>
-        </Row>
-      </Container>
+                ) : null}
+                {activeCommentThreadID != null &&
+                selectionForCommentPopover != null ? (
+                  <CommentThreadPopover
+                    editorOffsets={editorOffsets}
+                    threadID={activeCommentThreadID}
+                    selectionForCommentPopover={selectionForCommentPopover}
+                  />
+                ) : null}
+                <Editable
+                  renderElement={renderElement}
+                  renderLeaf={renderLeaf}
+                  onKeyDown={onKeyDown}
+                />
+              </div>
+            </Col>
+          </Row>
+        </Container>
+        <div className={"sidebar-wrapper"}>
+          <CommentsSidebar />
+        </div>
+      </div>
     </Slate>
   );
 }

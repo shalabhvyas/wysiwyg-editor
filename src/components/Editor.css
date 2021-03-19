@@ -1,13 +1,17 @@
 .editor-wrapper {
+  display: flex;
   padding: 0;
 }
 
 .sidebar-wrapper {
-  max-width: 400px;
   background-color: #fff;
+  height: calc(100vh - 56px);
+  min-width: 350px;
+  overflow-y: auto;
 }
 
 .sidebar-wrapper > .container {
+  margin: 0;
   padding: 0;
 }
 
@@ -16,6 +20,7 @@
   box-shadow: rgb(0 0 0 / 10%) 1px 1px 0px inset,
     rgb(0 0 0 / 7%) 0px -1px 0px inset;
   border-width: 1 1 1 6;
+  flex-grow: 1;
 }
 
 .editor {
