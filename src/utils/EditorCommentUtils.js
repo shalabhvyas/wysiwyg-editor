@@ -117,3 +117,40 @@ function updateCommentThreadLengthMap(
 
   return map;
 }
+
+export function initializeStateWithAllCommentThreads(
+  editor,
+  setCommentThreadData
+) {
+  const textNodesWithComments = Editor.nodes(editor, {
+    at: [],
+    mode: "lowest",
+    match: (n) => Text.isText(n) && getCommentThreadsOnTextNode(n).size > 0,
+  });
+
+  const commentThreads = new Set();
+
+  let textNodeEntry = textNodesWithComments.next().value;
+  while (textNodeEntry != null) {
+    [...getCommentThreadsOnTextNode(textNodeEntry[0])].forEach((threadID) => {
+      commentThreads.add(threadID);
+    });
+    textNodeEntry = textNodesWithComments.next().value;
+  }
+
+  console.log(commentThreads);
+
+  // Fetch comment threads from server and use the setter to set them here. For the sake
+  // of the article, we just set them to some default so we know the initialization works.
+  [...commentThreads.entries()].forEach((id) =>
+    setCommentThreadData(id, {
+      comments: [
+        {
+          author: "Manisha",
+          text: "Comment Loaded from Server",
+          creationTime: new Date(),
+        },
+      ],
+    })
+  );
+}

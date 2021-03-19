@@ -49,7 +49,6 @@ export default function CommentThreadPopover({
 
   useEffect(() => {
     return () => {
-      console.log("Unmounting popover");
       setActiveCommentThreadID(null);
     };
   }, [setActiveCommentThreadID]);

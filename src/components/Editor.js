@@ -1,24 +1,30 @@
 import "./Editor.css";
 
 import { Editable, Slate, withReact } from "slate-react";
+import React, { useEffect } from "react";
+import {
+  activeCommentThreadIDAtom,
+  commentThreadsState,
+} from "../utils/CommentState";
 import {
   identifyLinksInTextIfAny,
   isLinkNodeAtSelection,
 } from "../utils/EditorUtils";
+import {
+  initializeStateWithAllCommentThreads,
+  isCommentAtSelection,
+} from "../utils/EditorCommentUtils";
 import { useCallback, useMemo, useRef } from "react";
+import { useRecoilCallback, useRecoilValue } from "recoil";
 
 import Col from "react-bootstrap/Col";
 import CommentThreadPopover from "./CommentThreadPopover";
 import Container from "react-bootstrap/Container";
 import LinkEditor from "./LinkEditor";
-import React from "react";
 import Row from "react-bootstrap/Row";
 import Toolbar from "./Toolbar";
-import { activeCommentThreadIDAtom } from "../utils/CommentState";
 import { createEditor } from "slate";
-import { isCommentAtSelection } from "../utils/EditorCommentUtils";
 import useEditorConfig from "../hooks/useEditorConfig";
-import { useRecoilValue } from "recoil";
 import useSelection from "../hooks/useSelection";
 
 function Editor({ document, onChange }): JSX.Element {
@@ -33,6 +39,9 @@ function Editor({ document, onChange }): JSX.Element {
 
   const [previousSelection, selection, setSelection] = useSelection(editor);
   const activeCommentThreadID = useRecoilValue(activeCommentThreadIDAtom);
+  const setCommentThreadData = useRecoilCallback(({ set }, id, threadData) => {
+    set(commentThreadsState(id), threadData);
+  });
 
   // we update selection here because Slate fires an onChange even on pure selection change.
   const onChangeLocal = useCallback(
@@ -54,24 +63,15 @@ function Editor({ document, onChange }): JSX.Element {
     selectionForLink = previousSelection;
   }
 
-  let selectionForActiveComment = null;
+  let selectionForCommentPopover = null;
   if (isCommentAtSelection(editor, selection)) {
-    selectionForActiveComment = selection;
+    selectionForCommentPopover = selection;
   } else if (
     selection == null &&
     isCommentAtSelection(editor, previousSelection)
   ) {
-    selectionForActiveComment = previousSelection;
+    selectionForCommentPopover = previousSelection;
   }
-
-  console.log(
-    "selection",
-    selection,
-    "previousSelection",
-    previousSelection,
-    "selectionForActiveComment",
-    selectionForActiveComment
-  );
 
   const editorOffsets =
     editorRef.current != null
@@ -80,6 +80,10 @@ function Editor({ document, onChange }): JSX.Element {
           y: editorRef.current.getBoundingClientRect().y,
         }
       : null;
+
+  useEffect(() => {
+    initializeStateWithAllCommentThreads(editor, setCommentThreadData);
+  }, [editor]);
 
   return (
     <Slate editor={editor} value={document} onChange={onChangeLocal}>
@@ -102,11 +106,11 @@ function Editor({ document, onChange }): JSX.Element {
                 />
               ) : null}
               {activeCommentThreadID != null &&
-              selectionForActiveComment != null ? (
+              selectionForCommentPopover != null ? (
                 <CommentThreadPopover
                   editorOffsets={editorOffsets}
                   threadID={activeCommentThreadID}
-                  selectionForActiveComment={selectionForActiveComment}
+                  selectionForCommentPopover={selectionForCommentPopover}
                 />
               ) : null}
               <Editable

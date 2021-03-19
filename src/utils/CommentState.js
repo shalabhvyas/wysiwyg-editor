@@ -18,18 +18,3 @@ export const activeCommentThreadIDAtom = atom({
   key: "activeCommentThreadID",
   default: null,
 });
-
-export const activeCommentThreadDataSelector = selector({
-  key: "activeCommentThreadData",
-  get: ({ get }) => {
-    const activeCommentThreadID = get(activeCommentThreadIDAtom);
-    if (activeCommentThreadID == null) {
-      return null;
-    }
-
-    return {
-      threadID: activeCommentThreadID,
-      threadData: get(commentThreadsState(activeCommentThreadID)),
-    };
-  },
-});
