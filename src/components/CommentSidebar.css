@@ -2,6 +2,10 @@
   margin: 8px 0;
 }
 
+.is-resolved {
+  background-color: #f9fafa;
+}
+
 .comment-thread-container > .card-body {
   padding: 12px 0;
 }

@@ -11,6 +11,7 @@ import Card from "react-bootstrap/Card";
 import Col from "react-bootstrap/Col";
 import CommentRow from "./CommentRow";
 import Row from "react-bootstrap/Row";
+import classNames from "classnames";
 import { useRecoilValue } from "recoil";
 
 export default function CommentsSidebar(params) {
@@ -33,7 +34,7 @@ export default function CommentsSidebar(params) {
 }
 
 function CommentThread({ id }) {
-  const { comments } = useRecoilValue(commentThreadsState(id));
+  const { comments, status } = useRecoilValue(commentThreadsState(id));
   const [shouldShowReplies, setShouldShowReplies] = useState(false);
   const onBtnClick = useCallback(() => {
     setShouldShowReplies(!shouldShowReplies);
@@ -45,7 +46,13 @@ function CommentThread({ id }) {
 
   const [firstComment, ...otherComments] = comments;
   return (
-    <Card body={true} className={"comment-thread-container"}>
+    <Card
+      body={true}
+      className={classNames({
+        "comment-thread-container": true,
+        "is-resolved": status === "resolved",
+      })}
+    >
       <CommentRow comment={firstComment} showConnector={false} />
       {shouldShowReplies
         ? otherComments.map((comment, index) => (

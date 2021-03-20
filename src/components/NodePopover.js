@@ -4,6 +4,7 @@ import { useEffect, useRef } from "react";
 import Card from "react-bootstrap/Card";
 
 export default function NodePopover({
+  header,
   node,
   children,
   editorOffsets,
@@ -37,6 +38,7 @@ export default function NodePopover({
 
   return (
     <Card ref={popoverRef} className={className}>
+      {header != null ? <Card.Header>{header}</Card.Header> : null}
       <Card.Body style={isBodyFullWidth ? { padding: 0 } : undefined}>
         {children}
       </Card.Body>

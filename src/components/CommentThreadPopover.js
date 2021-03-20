@@ -44,6 +44,14 @@ export default function CommentThreadPopover({
     setCommentText("");
   }, [commentText, setCommentThreadData]);
 
+  const onToggleStatus = useCallback(() => {
+    const currentStatus = threadDataLoadable.contents.status;
+    setCommentThreadData((threadData) => ({
+      ...threadData,
+      status: currentStatus === "open" ? "resolved" : "open",
+    }));
+  }, [setCommentThreadData, threadDataLoadable.contents.status]);
+
   const onCommentTextChange = useCallback(
     (event) => setCommentText(event.target.value),
     [setCommentText]
@@ -55,14 +63,25 @@ export default function CommentThreadPopover({
     };
   }, [setActiveCommentThreadID]);
 
+  const hasThreadData = threadDataLoadable.state === "hasValue";
+
   return (
     <NodePopover
       editorOffsets={editorOffsets}
       isBodyFullWidth={true}
       node={textNode}
       className={"comment-thread-popover"}
+      header={
+        hasThreadData ? (
+          <Button variant="primary" onClick={onToggleStatus}>
+            {threadDataLoadable.contents.status === "open"
+              ? "Resolve"
+              : "Re-Open"}
+          </Button>
+        ) : undefined
+      }
     >
-      {threadDataLoadable.state === "hasValue" ? (
+      {hasThreadData ? (
         <>
           <div className={"comment-list"}>
             {threadDataLoadable.contents.comments.map((comment, index) => (

@@ -10,6 +10,7 @@ export function insertCommentThread(editor, addCommentThread) {
   addCommentThread(threadID, {
     comments: [],
     creationTime: new Date(),
+    status: "open",
   });
   Editor.addMark(editor, getMarkForCommentThreadID(threadID), true);
   return threadID;
@@ -140,6 +141,7 @@ export async function initializeStateWithAllCommentThreads(
           creationTime: new Date(),
         },
       ],
+      status: "open",
     })
   );
 }
