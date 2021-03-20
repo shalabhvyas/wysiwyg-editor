@@ -3,11 +3,6 @@ import "./Editor.css";
 import { Editable, Slate, withReact } from "slate-react";
 import React, { useEffect } from "react";
 import {
-  activeCommentThreadIDAtom,
-  commentThreadIDsState,
-  commentThreadsState,
-} from "../utils/CommentState";
-import {
   identifyLinksInTextIfAny,
   isLinkNodeAtSelection,
 } from "../utils/EditorUtils";
@@ -16,7 +11,6 @@ import {
   isCommentAtSelection,
 } from "../utils/EditorCommentUtils";
 import { useCallback, useMemo, useRef } from "react";
-import { useRecoilCallback, useRecoilValue } from "recoil";
 
 import Col from "react-bootstrap/Col";
 import CommentThreadPopover from "./CommentThreadPopover";
@@ -25,8 +19,11 @@ import Container from "react-bootstrap/Container";
 import LinkEditor from "./LinkEditor";
 import Row from "react-bootstrap/Row";
 import Toolbar from "./Toolbar";
+import { activeCommentThreadIDAtom } from "../utils/CommentState";
 import { createEditor } from "slate";
+import useAddCommentThreadCallback from "../hooks/useAddCommentThreadCallback";
 import useEditorConfig from "../hooks/useEditorConfig";
+import { useRecoilValue } from "recoil";
 import useSelection from "../hooks/useSelection";
 
 function Editor({ document, onChange }): JSX.Element {
@@ -41,13 +38,7 @@ function Editor({ document, onChange }): JSX.Element {
 
   const [previousSelection, selection, setSelection] = useSelection(editor);
   const activeCommentThreadID = useRecoilValue(activeCommentThreadIDAtom);
-  const setCommentThreadData = useRecoilCallback(
-    ({ set }) => (id, threadData) => {
-      set(commentThreadIDsState, (ids) => new Set([...Array.from(ids), id]));
-      set(commentThreadsState(id), threadData);
-    },
-    []
-  );
+  const addCommentThread = useAddCommentThreadCallback();
 
   // we update selection here because Slate fires an onChange even on pure selection change.
   const onChangeLocal = useCallback(
@@ -88,12 +79,12 @@ function Editor({ document, onChange }): JSX.Element {
       : null;
 
   useEffect(() => {
-    initializeStateWithAllCommentThreads(editor, setCommentThreadData);
-  }, [editor, setCommentThreadData]);
+    initializeStateWithAllCommentThreads(editor, addCommentThread);
+  }, [editor, addCommentThread]);
 
   return (
     <Slate editor={editor} value={document} onChange={onChangeLocal}>
-      <div className={"editor-wrapper"} fluid>
+      <div className={"editor-wrapper"} fluid={"true"}>
         <Container className={"editor-container"}>
           <Row>
             <Col>

@@ -12,18 +12,21 @@ import {
 import Button from "react-bootstrap/Button";
 import Dropdown from "react-bootstrap/Dropdown";
 import DropdownButton from "react-bootstrap/DropdownButton";
+import { activeCommentThreadIDAtom } from "../utils/CommentState";
 import { insertCommentThread } from "../utils/EditorCommentUtils";
+import useAddCommentThreadCallback from "../hooks/useAddCommentThreadCallback";
 import { useCallback } from "react";
 import { useEditor } from "slate-react";
 import useImageUploadHandler from "../hooks/useImageUploadHandler";
-import { useRecoilCallback } from "recoil";
+import { useSetRecoilState } from "recoil";
 
 const PARAGRAPH_STYLES = ["h1", "h2", "h3", "h4", "paragraph", "multiple"];
 const CHARACTER_STYLES = ["bold", "italic", "underline", "code"];
 
 export default function Toolbar({ selection, previousSelection }) {
   const editor = useEditor();
-  const setter = useRecoilCallback(({ set }) => () => set, []);
+  const setActiveCommentThreadID = useSetRecoilState(activeCommentThreadIDAtom);
+  const addCommentThread = useAddCommentThreadCallback();
 
   const onBlockTypeChange = useCallback(
     (targetType) => {
@@ -37,10 +40,10 @@ export default function Toolbar({ selection, previousSelection }) {
 
   const onImageSelected = useImageUploadHandler(editor, previousSelection);
 
-  const onInsertComment = useCallback(
-    () => insertCommentThread(editor, setter),
-    [editor, setter]
-  );
+  const onInsertComment = useCallback(() => {
+    const newCommentThreadID = insertCommentThread(editor, addCommentThread);
+    setActiveCommentThreadID(newCommentThreadID);
+  }, [editor, addCommentThread, setActiveCommentThreadID]);
 
   const blockType = getTextBlockStyle(editor);
 

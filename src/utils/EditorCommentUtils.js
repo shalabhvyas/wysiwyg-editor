@@ -1,27 +1,18 @@
 import { Editor, Text } from "slate";
-import {
-  activeCommentThreadIDAtom,
-  commentThreadIDsState,
-  commentThreadsState,
-} from "./CommentState";
 
 import { getFirstTextNodeAtSelection } from "./EditorUtils";
 import { v4 as uuidv4 } from "uuid";
 
 const COMMENT_THREAD_PREFIX = "commentThread_";
 
-export function insertCommentThread(editor, setter) {
+export function insertCommentThread(editor, addCommentThread) {
   const threadID = uuidv4();
-  setter()(commentThreadsState(threadID), {
+  addCommentThread(threadID, {
     comments: [],
     creationTime: new Date(),
   });
-  setter()(
-    commentThreadIDsState,
-    (ids) => new Set([...ids.values(), threadID])
-  );
-  setter()(activeCommentThreadIDAtom, threadID);
   Editor.addMark(editor, getMarkForCommentThreadID(threadID), true);
+  return threadID;
 }
 
 export function getMarkForCommentThreadID(threadID) {
@@ -144,8 +135,8 @@ export async function initializeStateWithAllCommentThreads(
     setCommentThreadData(id, {
       comments: [
         {
-          author: "Manisha",
-          text: "Comment Loaded from Server",
+          author: "Jane Doe",
+          text: "Comment Thread Loaded from Server",
           creationTime: new Date(),
         },
       ],
