@@ -1,6 +1,6 @@
 import "./CommentSidebar.css";
 
-import { Editor, Text } from "slate";
+import { Editor, Path, Text, Transforms } from "slate";
 import {
   activeCommentThreadIDAtom,
   commentThreadIDsState,
@@ -53,12 +53,23 @@ function CommentThread({ id }) {
       match: (n) => Text.isText(n) && getCommentThreadsOnTextNode(n).has(id),
     });
 
-    const textNodeEntry = textNodesWithThread.next().value;
-    if (textNodeEntry == null) {
-      throw Error(`Expected a text node with thread ID: ${id}`);
+    let textNodeEntry = textNodesWithThread.next().value;
+    const allTextNodePaths = [];
+    while (textNodeEntry != null) {
+      allTextNodePaths.push(textNodeEntry[1]);
+      textNodeEntry = textNodesWithThread.next().value;
     }
+    allTextNodePaths.sort((p1, p2) => Path.compare(p1, p2));
 
-    const textNode = textNodeEntry[0];
+    Transforms.select(editor, {
+      anchor: Editor.point(editor, allTextNodePaths[0], { edge: "start" }),
+      focus: Editor.point(
+        editor,
+        allTextNodePaths[allTextNodePaths.length - 1],
+        { edge: "end" }
+      ),
+    });
+
     setActiveCommentThreadID(id);
   }, [editor, id, setActiveCommentThreadID]);
 

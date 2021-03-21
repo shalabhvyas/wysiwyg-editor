@@ -76,7 +76,7 @@ const KeyBindings = {
       toggleStyle(editor, "italic");
       return;
     }
-    if (isHotkey("mod+c", event)) {
+    if (isHotkey("mod+k", event)) {
       toggleStyle(editor, "code");
       return;
     }
