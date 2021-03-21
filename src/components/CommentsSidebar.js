@@ -1,10 +1,13 @@
 import "./CommentSidebar.css";
 
+import { Editor, Text } from "slate";
 import {
+  activeCommentThreadIDAtom,
   commentThreadIDsState,
   commentThreadsState,
 } from "../utils/CommentState";
 import { useCallback, useState } from "react";
+import { useRecoilValue, useSetRecoilState } from "recoil";
 
 import Button from "react-bootstrap/Button";
 import Card from "react-bootstrap/Card";
@@ -12,7 +15,8 @@ import Col from "react-bootstrap/Col";
 import CommentRow from "./CommentRow";
 import Row from "react-bootstrap/Row";
 import classNames from "classnames";
-import { useRecoilValue } from "recoil";
+import { getCommentThreadsOnTextNode } from "../utils/EditorCommentUtils";
+import { useEditor } from "slate-react";
 
 export default function CommentsSidebar(params) {
   const allCommentThreadIDs = useRecoilValue(commentThreadIDsState);
@@ -34,11 +38,29 @@ export default function CommentsSidebar(params) {
 }
 
 function CommentThread({ id }) {
+  const editor = useEditor();
   const { comments, status } = useRecoilValue(commentThreadsState(id));
+  const setActiveCommentThreadID = useSetRecoilState(activeCommentThreadIDAtom);
   const [shouldShowReplies, setShouldShowReplies] = useState(false);
   const onBtnClick = useCallback(() => {
     setShouldShowReplies(!shouldShowReplies);
   }, [shouldShowReplies, setShouldShowReplies]);
+
+  const onClick = useCallback(() => {
+    const textNodesWithThread = Editor.nodes(editor, {
+      at: [],
+      mode: "lowest",
+      match: (n) => Text.isText(n) && getCommentThreadsOnTextNode(n).has(id),
+    });
+
+    const textNodeEntry = textNodesWithThread.next().value;
+    if (textNodeEntry == null) {
+      throw Error(`Expected a text node with thread ID: ${id}`);
+    }
+
+    const textNode = textNodeEntry[0];
+    setActiveCommentThreadID(id);
+  }, [editor, id, setActiveCommentThreadID]);
 
   if (comments.length === 0) {
     return null;
@@ -52,6 +74,7 @@ function CommentThread({ id }) {
         "comment-thread-container": true,
         "is-resolved": status === "resolved",
       })}
+      onClick={onClick}
     >
       <CommentRow comment={firstComment} showConnector={false} />
       {shouldShowReplies
