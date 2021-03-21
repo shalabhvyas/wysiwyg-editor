@@ -30,6 +30,7 @@ export default function NodePopover({
     editorEl.style.display = "block";
     editorEl.style.top = `${nodeY + nodeHeight - editorOffsets.y}px`;
     editorEl.style.left = `${nodeX - editorOffsets.x}px`;
+    editorEl.scrollIntoView(false);
   }, [editor, editorOffsets.x, editorOffsets.y, node]);
 
   if (editorOffsets == null) {

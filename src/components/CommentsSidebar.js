@@ -7,7 +7,7 @@ import {
   commentThreadsState,
 } from "../utils/CommentState";
 import { useCallback, useState } from "react";
-import { useRecoilValue, useSetRecoilState } from "recoil";
+import { useRecoilState, useRecoilValue } from "recoil";
 
 import Button from "react-bootstrap/Button";
 import Card from "react-bootstrap/Card";
@@ -40,7 +40,9 @@ export default function CommentsSidebar(params) {
 function CommentThread({ id }) {
   const editor = useEditor();
   const { comments, status } = useRecoilValue(commentThreadsState(id));
-  const setActiveCommentThreadID = useSetRecoilState(activeCommentThreadIDAtom);
+  const [activeCommentThreadID, setActiveCommentThreadID] = useRecoilState(
+    activeCommentThreadIDAtom
+  );
   const [shouldShowReplies, setShouldShowReplies] = useState(false);
   const onBtnClick = useCallback(() => {
     setShouldShowReplies(!shouldShowReplies);
@@ -84,6 +86,7 @@ function CommentThread({ id }) {
       className={classNames({
         "comment-thread-container": true,
         "is-resolved": status === "resolved",
+        "is-active": activeCommentThreadID === id,
       })}
       onClick={onClick}
     >

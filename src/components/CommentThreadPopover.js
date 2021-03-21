@@ -64,6 +64,7 @@ export default function CommentThreadPopover({
   }, [setActiveCommentThreadID]);
 
   const hasThreadData = threadDataLoadable.state === "hasValue";
+  const threadData = threadDataLoadable.contents;
 
   return (
     <NodePopover
@@ -72,25 +73,24 @@ export default function CommentThreadPopover({
       node={textNode}
       className={"comment-thread-popover"}
       header={
-        hasThreadData ? (
-          <Button variant="primary" onClick={onToggleStatus}>
-            {threadDataLoadable.contents.status === "open"
-              ? "Resolve"
-              : "Re-Open"}
-          </Button>
-        ) : undefined
+        <Header
+          status={threadData.status ?? null}
+          shouldAllowStatusChange={
+            hasThreadData && threadData.comments.length > 0
+          }
+          onToggleStatus={onToggleStatus}
+        />
       }
     >
       {hasThreadData ? (
         <>
           <div className={"comment-list"}>
-            {threadDataLoadable.contents.comments.map((comment, index) => (
+            {threadData.comments.map((comment, index) => (
               <CommentRow key={index} comment={comment} />
             ))}
           </div>
           <div className={"comment-input-wrapper"}>
             <Form.Control
-              autoFocus={true}
               bsPrefix={"comment-input form-control"}
               placeholder={"Type a comment"}
               type="text"
@@ -98,6 +98,7 @@ export default function CommentThreadPopover({
               onChange={onCommentTextChange}
             />
             <Button
+              size="sm"
               variant="primary"
               disabled={commentText.length === 0}
               onClick={onClick}
@@ -110,5 +111,17 @@ export default function CommentThreadPopover({
         "Loading"
       )}
     </NodePopover>
+  );
+}
+
+function Header({ onToggleStatus, shouldAllowStatusChange, status }) {
+  return (
+    <div className={"comment-thread-popover-header"}>
+      {shouldAllowStatusChange && status != null ? (
+        <Button size="sm" variant="primary" onClick={onToggleStatus}>
+          {status === "open" ? "Resolve" : "Re-Open"}
+        </Button>
+      ) : null}
+    </div>
   );
 }

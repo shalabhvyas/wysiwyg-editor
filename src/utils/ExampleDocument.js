@@ -1,6 +1,8 @@
 import { getMarkForCommentThreadID } from "./EditorCommentUtils";
 import { v4 as uuid } from "uuid";
 
+const overlappingCommentThreadID = uuid();
+
 const ExampleDocument = [
   {
     type: "h1",
@@ -15,21 +17,22 @@ const ExampleDocument = [
     children: [
       {
         text: "Text 1",
-        [getMarkForCommentThreadID("thread_1")]: true,
+        [getMarkForCommentThreadID(uuid())]: true,
       },
       {
         text: "Text 2",
+        [getMarkForCommentThreadID(overlappingCommentThreadID)]: true,
       },
       {
         text: "Text 3",
         bold: true,
-        [getMarkForCommentThreadID("thread_2")]: true,
-        [getMarkForCommentThreadID("thread_3")]: true,
+        [getMarkForCommentThreadID(overlappingCommentThreadID)]: true,
+        [getMarkForCommentThreadID(uuid())]: true,
       },
       {
         text: "Text 4",
         bold: true,
-        [getMarkForCommentThreadID("thread_4")]: true,
+        [getMarkForCommentThreadID(uuid())]: true,
       },
       {
         text:
@@ -38,7 +41,6 @@ const ExampleDocument = [
       {
         type: "link",
         url: "https://www.google.com",
-        [getMarkForCommentThreadID("thread_4")]: true,
         children: [
           { text: "Blandit aliquam etiam erat velit scelerisque in dictum." },
           {
@@ -75,6 +77,11 @@ const ExampleDocument = [
   {
     type: "paragraph",
     children: [
+      {
+        [getMarkForCommentThreadID(uuid())]: true,
+        text:
+          "Cras maximus auctor congue. Sed ultrices elit quis tortor ornare, non gravida turpis feugiat. Morbi facilisis sodales sem quis feugiat. Vestibulum non urna lobortis, semper metus in, condimentum ex. Quisque est justo, egestas sit amet sem ac, auctor ultricies lacus. Pellentesque lorem justo, rhoncus ut magna sit amet, rhoncus posuere libero.",
+      },
       {
         text:
           "Cras maximus auctor congue. Sed ultrices elit quis tortor ornare, non gravida turpis feugiat. Morbi facilisis sodales sem quis feugiat. Vestibulum non urna lobortis, semper metus in, condimentum ex. Quisque est justo, egestas sit amet sem ac, auctor ultricies lacus. Pellentesque lorem justo, rhoncus ut magna sit amet, rhoncus posuere libero.",

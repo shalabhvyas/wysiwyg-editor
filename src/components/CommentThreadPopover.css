@@ -3,7 +3,7 @@
   background: white;
   position: absolute;
   margin-top: 4px;
-  min-width: 300px;
+  min-width: 350px;
   z-index: 1;
 }
 
@@ -25,7 +25,7 @@
 }
 
 .comment-text {
-  max-width: 300px;
+  max-width: 350px;
 }
 
 .comment-author-photo {
@@ -45,4 +45,10 @@
 
 .comment-input:focus {
   box-shadow: none;
+}
+
+.comment-thread-popover-header {
+  display: flex;
+  justify-content: flex-end;
+  min-height: 31px;
 }
