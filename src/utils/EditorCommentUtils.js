@@ -1,4 +1,4 @@
-import { Editor, Text } from "slate";
+import { Editor, Range, Text } from "slate";
 
 import { getFirstTextNodeAtSelection } from "./EditorUtils";
 import { v4 as uuidv4 } from "uuid";
@@ -6,6 +6,10 @@ import { v4 as uuidv4 } from "uuid";
 const COMMENT_THREAD_PREFIX = "commentThread_";
 
 export function shouldAllowNewCommentThreadAtSelection(editor, selection) {
+  if (selection == null || Range.isCollapsed(selection)) {
+    return false;
+  }
+
   const textNodeIterator = Editor.nodes(editor, {
     at: selection,
     mode: "lowest",
