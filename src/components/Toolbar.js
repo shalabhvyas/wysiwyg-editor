@@ -8,12 +8,15 @@ import {
   toggleLinkAtSelection,
   toggleStyle,
 } from "../utils/EditorUtils";
+import {
+  insertCommentThread,
+  shouldAllowNewCommentThreadAtSelection,
+} from "../utils/EditorCommentUtils";
 
 import Button from "react-bootstrap/Button";
 import Dropdown from "react-bootstrap/Dropdown";
 import DropdownButton from "react-bootstrap/DropdownButton";
 import { activeCommentThreadIDAtom } from "../utils/CommentState";
-import { insertCommentThread } from "../utils/EditorCommentUtils";
 import useAddCommentThreadCallback from "../hooks/useAddCommentThreadCallback";
 import { useCallback } from "react";
 import { useEditor } from "slate-react";
@@ -98,6 +101,7 @@ export default function Toolbar({ selection, previousSelection }) {
       {/* Comment Button */}
       <ToolBarButton
         isActive={false}
+        disabled={!shouldAllowNewCommentThreadAtSelection(editor, selection)}
         label={<i className={`bi ${getIconForButton("comment")}`} />}
         onMouseDown={onInsertComment}
       />
