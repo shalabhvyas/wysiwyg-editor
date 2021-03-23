@@ -1,3 +1,5 @@
+import { format } from "date-fns";
+
 export default function CommentRow({
   comment: { author, text, creationTime },
 }) {
@@ -8,6 +10,9 @@ export default function CommentRow({
       </div>
       <div>
         <span className="comment-author-name">{author}</span>
+        <span className="comment-creation-time">
+          {format(creationTime, "eee MM/dd H:mm")}
+        </span>
         <div className="comment-text">{text}</div>
       </div>
     </div>

@@ -33,6 +33,11 @@
   margin-right: 4px;
 }
 
+.comment-creation-time {
+  color: #6c757d;
+  font-size: 14px;
+}
+
 .comment-input-wrapper {
   border-top: 1px solid #ced4da;
   display: flex;
