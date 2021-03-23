@@ -29,37 +29,9 @@ export function shouldAllowNewCommentThreadAtSelection(editor, selection) {
   // If any text is uncommented on, later on, user could click on that
   // text to see details of this thread so allow a new comment thread
   // to be created.
-  if (
-    textNodeEntriesInSelection.some(
-      ([textNode]) => getCommentThreadsOnTextNode(textNode).size === 0
-    )
-  ) {
-    return true;
-  }
-
-  const textNodeEntryBeforeSelection = Editor.previous(editor, {
-    at: textNodeEntriesInSelection[0][1],
-    mode: "lowest",
-  });
-  const textNodeEntryAfterSelection = Editor.next(editor, {
-    at: textNodeEntriesInSelection[textNodeEntriesInSelection.length - 1][1],
-    mode: "lowest",
-  });
-
-  const hasNoCommentsBeforeSelection =
-    textNodeEntryBeforeSelection == null ||
-    getCommentThreadsOnTextNode(textNodeEntriesInSelection[0]).size === 0;
-
-  const hasNoCommentsAfterSelection =
-    textNodeEntryAfterSelection == null ||
-    getCommentThreadsOnTextNode(textNodeEntryAfterSelection[0]).size === 0;
-
-  // If the text before and after don't exist or are not commented on, the
-  // new comment thread if allowed would either completely overlap with
-  // an existing thread or be the largest thread over the selection leaving
-  // no text where user can click and select this thread. In such a case,
-  // disallow creation.
-  return !(hasNoCommentsBeforeSelection && hasNoCommentsAfterSelection);
+  return textNodeEntriesInSelection.some(
+    ([textNode]) => getCommentThreadsOnTextNode(textNode).size === 0
+  );
 }
 
 export function insertCommentThread(editor, addCommentThread) {
