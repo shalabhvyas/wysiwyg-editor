@@ -1,3 +1,5 @@
+import "./CommentedText.css";
+
 import { activeCommentThreadIDAtom } from "../utils/CommentState";
 import classNames from "classnames";
 import { getSmallestCommentThreadAtTextNode } from "../utils/EditorCommentUtils";

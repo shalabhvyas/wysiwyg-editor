@@ -1,5 +1,3 @@
-import "./StyledText.css";
-
 import CommentedText from "./CommentedText";
 import React from "react";
 import { getCommentThreadsOnTextNode } from "../utils/EditorCommentUtils";
