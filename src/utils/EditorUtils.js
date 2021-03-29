@@ -141,9 +141,9 @@ export function identifyLinksInTextIfAny(editor) {
   const lastWord = Editor.string(editor, lastWordRange);
 
   if (isUrl(lastWord)) {
-    requestAnimationFrame(() => {
-      createLinkForRange(editor, lastWordRange, lastWord, lastWord);
-    });
+    Promise.resolve().then(() =>
+      createLinkForRange(editor, lastWordRange, lastWord, lastWord)
+    );
   }
 }
 
