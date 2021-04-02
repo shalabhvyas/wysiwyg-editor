@@ -79,6 +79,20 @@ export function getSmallestCommentThreadAtTextNode(editor, textNode) {
 
   let newActiveCommentThreadID = commentThreadsAsArray[0];
 
+  const reverseTextNodeIterator = (slateEditor, nodePath) =>
+    Editor.previous(slateEditor, {
+      at: nodePath,
+      mode: "lowest",
+      match: Text.isText,
+    });
+
+  const forwardTextNodeIterator = (slateEditor, nodePath) =>
+    Editor.next(slateEditor, {
+      at: nodePath,
+      mode: "lowest",
+      match: Text.isText,
+    });
+
   if (commentThreads.size > 1) {
     const commentThreadsLengthByID = new Map(
       commentThreadsAsArray.map((id) => [id, textNode.text.length])
@@ -87,16 +101,14 @@ export function getSmallestCommentThreadAtTextNode(editor, textNode) {
     updateCommentThreadLengthMap(
       editor,
       commentThreads,
-      // change this to be `Editor.previous({match:'lowest'}) otherwise it
-      // might match non-text nodes.
-      Editor.previous,
+      reverseTextNodeIterator,
       commentThreadsLengthByID
     );
 
     updateCommentThreadLengthMap(
       editor,
       commentThreads,
-      Editor.next,
+      forwardTextNodeIterator,
       commentThreadsLengthByID
     );
 
@@ -120,7 +132,7 @@ function updateCommentThreadLengthMap(
   map
 ) {
   let nextNodeEntry = nodeIterator(editor);
-  while (nextNodeEntry != null && Text.isText(nextNodeEntry[0])) {
+  while (nextNodeEntry != null) {
     const nextNode = nextNodeEntry[0];
     const commentThreadsOnNextNode = getCommentThreadsOnTextNode(nextNode);
     const intersection = [...commentThreadsOnNextNode].filter((x) =>
@@ -135,7 +147,7 @@ function updateCommentThreadLengthMap(
       map.set(intersection[i], map.get(intersection[i]) + nextNode.text.length);
     }
 
-    nextNodeEntry = nodeIterator(editor, { at: nextNodeEntry[1] });
+    nextNodeEntry = nodeIterator(editor, nextNodeEntry[1]);
   }
 
   return map;
