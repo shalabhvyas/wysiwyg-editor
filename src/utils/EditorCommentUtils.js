@@ -139,7 +139,7 @@ function updateCommentThreadLengthMap(
       commentThreads.has(x)
     );
     // All comment threads we're looking for have already ended.
-    if (intersection.size === 0) {
+    if (intersection.length === 0) {
       break;
     }
 
