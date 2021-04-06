@@ -1,5 +1,6 @@
 import "./CommentThreadPopover.css";
 
+import { ReactEditor, useEditor } from "slate-react";
 import {
   activeCommentThreadIDAtom,
   commentThreadsState,
@@ -11,8 +12,9 @@ import Button from "react-bootstrap/Button";
 import CommentRow from "./CommentRow";
 import Form from "react-bootstrap/Form";
 import NodePopover from "./NodePopover";
+import { Text } from "slate";
+import { getCommentThreadsOnTextNode } from "../utils/EditorCommentUtils";
 import { getFirstTextNodeAtSelection } from "../utils/EditorUtils";
-import { useEditor } from "slate-react";
 
 export default function CommentThreadPopover({
   editorOffsets,
@@ -55,13 +57,35 @@ export default function CommentThreadPopover({
     [setCommentText]
   );
 
-  const removeActiveCommentThreadID = useCallback(
-    () => setActiveCommentThreadID(null),
-    [setActiveCommentThreadID]
+  const onClickOutside = useCallback(
+    (event) => {
+      const slateDOMNode = event.target.hasAttribute("data-slate-node")
+        ? event.target
+        : event.target.closest(`[data-slate-node]`);
+
+      // The click event was somewhere outside the Slate hierarchy
+      if (slateDOMNode == null) {
+        setActiveCommentThreadID(null);
+        return;
+      }
+
+      const slateNode = ReactEditor.toSlateNode(editor, slateDOMNode);
+
+      // Click is on another commented text node => do nothing.
+      if (
+        Text.isText(slateNode) &&
+        getCommentThreadsOnTextNode(slateNode).size > 0
+      ) {
+        return;
+      }
+
+      setActiveCommentThreadID(null);
+    },
+    [editor, setActiveCommentThreadID]
   );
 
   useEffect(() => {
-    inputRef.current?.focus();
+    //inputRef.current?.focus();
     return () => {
       setActiveCommentThreadID(null);
     };
@@ -85,7 +109,7 @@ export default function CommentThreadPopover({
           onToggleStatus={onToggleStatus}
         />
       }
-      onClickOutside={removeActiveCommentThreadID}
+      onClickOutside={onClickOutside}
     >
       {hasThreadData ? (
         <>

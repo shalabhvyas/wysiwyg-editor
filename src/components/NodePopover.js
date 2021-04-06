@@ -41,7 +41,7 @@ export default function NodePopover({
         !popoverRef.current.contains(event.target) &&
         onClickOutside != null
       ) {
-        onClickOutside();
+        onClickOutside(event);
       }
     },
     [onClickOutside]
