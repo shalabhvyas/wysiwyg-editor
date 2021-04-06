@@ -1,6 +1,5 @@
 import { Editor, Range, Text } from "slate";
 
-import { getFirstTextNodeAtSelection } from "./EditorUtils";
 import { v4 as uuidv4 } from "uuid";
 
 const COMMENT_THREAD_PREFIX = "commentThread_";
@@ -66,11 +65,6 @@ export function getCommentThreadsOnTextNode(textNode) {
       .filter(isCommentThreadIDMark)
       .map(getCommentThreadIDFromMark)
   );
-}
-
-export function isCommentAtSelection(editor, selection) {
-  const textNode = getFirstTextNodeAtSelection(editor, selection);
-  return textNode != null && getCommentThreadsOnTextNode(textNode).size > 0;
 }
 
 export function getSmallestCommentThreadAtTextNode(editor, textNode) {

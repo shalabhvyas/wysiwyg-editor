@@ -1,5 +1,5 @@
 import { ReactEditor, useEditor } from "slate-react";
-import { useEffect, useRef } from "react";
+import { useCallback, useEffect, useRef } from "react";
 
 import Card from "react-bootstrap/Card";
 
@@ -10,6 +10,7 @@ export default function NodePopover({
   editorOffsets,
   className,
   isBodyFullWidth,
+  onClickOutside,
 }) {
   const popoverRef = useRef(null);
   const editor = useEditor();
@@ -32,6 +33,27 @@ export default function NodePopover({
     editorEl.style.left = `${nodeX - editorOffsets.x}px`;
     editorEl.scrollIntoView(false);
   }, [editor, editorOffsets.x, editorOffsets.y, node]);
+
+  const onMouseDown = useCallback(
+    (event) => {
+      if (
+        popoverRef.current != null &&
+        !popoverRef.current.contains(event.target) &&
+        onClickOutside != null
+      ) {
+        onClickOutside();
+      }
+    },
+    [onClickOutside]
+  );
+
+  useEffect(() => {
+    document.addEventListener("mousedown", onMouseDown);
+
+    return () => {
+      document.removeEventListener("mousedown", onMouseDown);
+    };
+  }, [onMouseDown]);
 
   if (editorOffsets == null) {
     return null;

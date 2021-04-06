@@ -4,7 +4,7 @@ import {
   activeCommentThreadIDAtom,
   commentThreadsState,
 } from "../utils/CommentState";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { useRecoilStateLoadable, useSetRecoilState } from "recoil";
 
 import Button from "react-bootstrap/Button";
@@ -16,14 +16,12 @@ import { useEditor } from "slate-react";
 
 export default function CommentThreadPopover({
   editorOffsets,
-  selectionForCommentPopover,
+  selection,
   threadID,
 }) {
+  const inputRef = useRef();
   const editor = useEditor();
-  const textNode = getFirstTextNodeAtSelection(
-    editor,
-    selectionForCommentPopover
-  );
+  const textNode = getFirstTextNodeAtSelection(editor, selection);
 
   const setActiveCommentThreadID = useSetRecoilState(activeCommentThreadIDAtom);
 
@@ -57,7 +55,13 @@ export default function CommentThreadPopover({
     [setCommentText]
   );
 
+  const removeActiveCommentThreadID = useCallback(
+    () => setActiveCommentThreadID(null),
+    [setActiveCommentThreadID]
+  );
+
   useEffect(() => {
+    inputRef.current?.focus();
     return () => {
       setActiveCommentThreadID(null);
     };
@@ -81,6 +85,7 @@ export default function CommentThreadPopover({
           onToggleStatus={onToggleStatus}
         />
       }
+      onClickOutside={removeActiveCommentThreadID}
     >
       {hasThreadData ? (
         <>
@@ -93,6 +98,7 @@ export default function CommentThreadPopover({
             <Form.Control
               bsPrefix={"comment-input form-control"}
               placeholder={"Type a comment"}
+              ref={inputRef}
               type="text"
               value={commentText}
               onChange={onCommentTextChange}

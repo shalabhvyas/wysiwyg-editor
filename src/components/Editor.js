@@ -6,10 +6,6 @@ import {
   identifyLinksInTextIfAny,
   isLinkNodeAtSelection,
 } from "../utils/EditorUtils";
-import {
-  initializeStateWithAllCommentThreads,
-  isCommentAtSelection,
-} from "../utils/EditorCommentUtils";
 import { useCallback, useMemo, useRef } from "react";
 
 import Col from "react-bootstrap/Col";
@@ -21,6 +17,7 @@ import Row from "react-bootstrap/Row";
 import Toolbar from "./Toolbar";
 import { activeCommentThreadIDAtom } from "../utils/CommentState";
 import { createEditor } from "slate";
+import { initializeStateWithAllCommentThreads } from "../utils/EditorCommentUtils";
 import useAddCommentThreadCallback from "../hooks/useAddCommentThreadCallback";
 import useEditorConfig from "../hooks/useEditorConfig";
 import { useRecoilValue } from "recoil";
@@ -60,16 +57,6 @@ function Editor({ document, onChange }): JSX.Element {
     selectionForLink = previousSelection;
   }
 
-  let selectionForCommentPopover = null;
-  if (isCommentAtSelection(editor, selection)) {
-    selectionForCommentPopover = selection;
-  } else if (
-    selection == null &&
-    isCommentAtSelection(editor, previousSelection)
-  ) {
-    selectionForCommentPopover = previousSelection;
-  }
-
   const editorOffsets =
     editorRef.current != null
       ? {
@@ -103,12 +90,11 @@ function Editor({ document, onChange }): JSX.Element {
                     selectionForLink={selectionForLink}
                   />
                 ) : null}
-                {activeCommentThreadID != null &&
-                selectionForCommentPopover != null ? (
+                {activeCommentThreadID != null ? (
                   <CommentThreadPopover
                     editorOffsets={editorOffsets}
                     threadID={activeCommentThreadID}
-                    selectionForCommentPopover={selectionForCommentPopover}
+                    selection={selection ?? previousSelection}
                   />
                 ) : null}
                 <Editable
