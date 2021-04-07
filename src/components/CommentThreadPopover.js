@@ -5,7 +5,7 @@ import {
   activeCommentThreadIDAtom,
   commentThreadsState,
 } from "../utils/CommentState";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useRecoilStateLoadable, useSetRecoilState } from "recoil";
 
 import Button from "react-bootstrap/Button";
@@ -21,7 +21,6 @@ export default function CommentThreadPopover({
   selection,
   threadID,
 }) {
-  const inputRef = useRef();
   const editor = useEditor();
   const textNode = getFirstTextNodeAtSelection(editor, selection);
 
@@ -122,7 +121,6 @@ export default function CommentThreadPopover({
             <Form.Control
               bsPrefix={"comment-input form-control"}
               placeholder={"Type a comment"}
-              ref={inputRef}
               type="text"
               value={commentText}
               onChange={onCommentTextChange}
