@@ -18,7 +18,7 @@ import classNames from "classnames";
 import { getCommentThreadsOnTextNode } from "../utils/EditorCommentUtils";
 import { useEditor } from "slate-react";
 
-export default function CommentsSidebar(params) {
+export default function CommentsSidebar() {
   const allCommentThreadIDs = useRecoilValue(commentThreadIDsState);
 
   return (
