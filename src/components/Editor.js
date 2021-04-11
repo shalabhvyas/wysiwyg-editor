@@ -17,11 +17,7 @@ import { createEditor } from "slate";
 import useEditorConfig from "../hooks/useEditorConfig";
 import useSelection from "../hooks/useSelection";
 
-// A hack that needs to be applied to prevent selection from getting reset if some
-// input element outside takes focus. https://github.com/ianstormtaylor/slate/issues/3412
-// Transforms.deselect = () => {};
-
-function Editor({ document, onChange }): JSX.Element {
+export default function Editor({ document, onChange }) {
   const editorRef = useRef(null);
   const editor = useMemo(() => withReact(createEditor()), []);
   const { renderLeaf, renderElement, KeyBindings } = useEditorConfig(editor);
@@ -37,7 +33,7 @@ function Editor({ document, onChange }): JSX.Element {
   const onChangeLocal = useCallback(
     (doc) => {
       onChange(doc);
-      setSelection(editor.selection);
+      setSelection(editor.selection);      
       identifyLinksInTextIfAny(editor);
     },
     [onChange, setSelection, editor]
@@ -92,5 +88,3 @@ function Editor({ document, onChange }): JSX.Element {
     </Slate>
   );
 }
-
-export default Editor;

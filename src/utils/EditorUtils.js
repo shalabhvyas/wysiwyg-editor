@@ -59,6 +59,10 @@ export function hasActiveLinkAtSelection(editor) {
 }
 
 export function toggleLinkAtSelection(editor) {
+  if(editor.selection == null) {
+    return;
+  }
+  
   if (hasActiveLinkAtSelection(editor)) {
     Transforms.unwrapNodes(editor, {
       match: (n) => Element.isElement(n) && n.type === "link",
