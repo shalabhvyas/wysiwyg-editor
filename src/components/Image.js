@@ -68,8 +68,7 @@ const Image = ({ attributes, children, element }) => {
     [isEditingCaption, applyCaptionChange, caption]
   );
 
-  return (
-    // void elements need to be content editable false, explain that part.
+  return (    
     <div contentEditable={false} {...attributes}>
       <div
         className={classNames({
@@ -103,9 +102,7 @@ const Image = ({ attributes, children, element }) => {
             {element.caption}
           </div>
         )}
-      </div>
-      {/* Void blocks in general, always have an empty text node to have a point to select to.This is children here. 
-      And that is why we have to have an empty text ''  node at the end*/}
+      </div>      
       {children}
     </div>
   );

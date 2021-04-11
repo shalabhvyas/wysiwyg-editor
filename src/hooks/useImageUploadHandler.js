@@ -55,8 +55,7 @@ export default function useImageUploadHandler(editor, selection) {
             );
           }, 3000);
         })
-        .catch((error) => {
-          console.log(error);
+        .catch((error) => {          
           // Fire another Transform.setNodes to set an upload failed state on the image
         });
     },

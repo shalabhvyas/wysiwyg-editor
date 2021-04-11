@@ -32,7 +32,6 @@ export default function Toolbar({ selection, previousSelection }) {
     [editor]
   );
 
-  // Talk about why we need previousSelection here - https://github.com/ianstormtaylor/slate/issues/3412#issuecomment-574831587
   const onImageSelected = useImageUploadHandler(editor, previousSelection);
 
   const blockType = getTextBlockStyle(editor);

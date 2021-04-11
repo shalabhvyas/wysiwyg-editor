@@ -35,9 +35,6 @@ export default function LinkEditor({ editorOffsets, selectionForLink }) {
     [editor, linkURL, path]
   );
 
-  // Explain why this needs to be in a `useEffect` since otherwise when adding
-  // a new link DOMNode for the link might not have rendered yet and `ReactEditor.toDOMNode`
-  // throws an error.
   useEffect(() => {
     const editorEl = linkEditorRef.current;
     if (editorEl == null) {
