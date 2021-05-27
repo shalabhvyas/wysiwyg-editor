@@ -1,4 +1,6 @@
+import CommentedText from "./CommentedText";
 import React from "react";
+import { getCommentThreadsOnTextNode } from "../utils/EditorCommentUtils";
 
 export default function StyledText({ attributes, children, leaf }) {
   if (leaf.bold) {
@@ -15,6 +17,20 @@ export default function StyledText({ attributes, children, leaf }) {
 
   if (leaf.underline) {
     children = <u {...attributes}>{children}</u>;
+  }
+
+  const commentThreads = getCommentThreadsOnTextNode(leaf);
+
+  if (commentThreads.size > 0) {
+    return (
+      <CommentedText
+        {...attributes}
+        commentThreads={commentThreads}
+        textNode={leaf}
+      >
+        {children}
+      </CommentedText>
+    );
   }
 
   return <span {...attributes}>{children}</span>;

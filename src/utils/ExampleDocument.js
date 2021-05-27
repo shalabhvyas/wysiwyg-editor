@@ -1,4 +1,7 @@
+import { getMarkForCommentThreadID } from "./EditorCommentUtils";
 import { v4 as uuid } from "uuid";
+
+const overlappingCommentThreadID = uuid();
 
 const ExampleDocument = [
   {
@@ -13,10 +16,24 @@ const ExampleDocument = [
     type: "paragraph",
     children: [
       {
-        text:
-          "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.",
+        text: "Text 1",
+        [getMarkForCommentThreadID(uuid())]: true,
       },
-      { text: "Duis aute irure dolor", bold: true },
+      {
+        text: "Text 2",
+        [getMarkForCommentThreadID(overlappingCommentThreadID)]: true,
+      },
+      {
+        text: "Text 3",
+        bold: true,
+        [getMarkForCommentThreadID(overlappingCommentThreadID)]: true,
+        [getMarkForCommentThreadID(uuid())]: true,
+      },
+      {
+        text: "Text 4",
+        bold: true,
+        [getMarkForCommentThreadID(uuid())]: true,
+      },
       {
         text:
           " in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
@@ -60,6 +77,11 @@ const ExampleDocument = [
   {
     type: "paragraph",
     children: [
+      {
+        [getMarkForCommentThreadID(uuid())]: true,
+        text:
+          "Cras maximus auctor congue. Sed ultrices elit quis tortor ornare, non gravida turpis feugiat. Morbi facilisis sodales sem quis feugiat. Vestibulum non urna lobortis, semper metus in, condimentum ex. Quisque est justo, egestas sit amet sem ac, auctor ultricies lacus. Pellentesque lorem justo, rhoncus ut magna sit amet, rhoncus posuere libero.",
+      },
       {
         text:
           "Cras maximus auctor congue. Sed ultrices elit quis tortor ornare, non gravida turpis feugiat. Morbi facilisis sodales sem quis feugiat. Vestibulum non urna lobortis, semper metus in, condimentum ex. Quisque est justo, egestas sit amet sem ac, auctor ultricies lacus. Pellentesque lorem justo, rhoncus ut magna sit amet, rhoncus posuere libero.",
