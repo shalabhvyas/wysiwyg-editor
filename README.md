@@ -1,6 +1,9 @@
 # WYSIWYG Editor with SlateJS
 
-This project builds a WYSIWYG Editor using SlateJS. The [article](https://www.smashingmagazine.com/2021/04/wysiwyg-editor-slatejs/) on Smashing magazine walks through the process of building it.
+This project builds a WYSIWYG Editor using SlateJS and adds a Commenting System to it. The code compliments below articles -
+
+[Building A Rich Text Editor (WYSIWYG)](https://www.smashingmagazine.com/2021/05/building-wysiwyg-editor-javascript-slatejs/)
+[Adding A Commenting System To A WYSIWYG Editor](https://www.smashingmagazine.com/2021/05/commenting-system-wysiwyg-editor/)
 
 ## Available Scripts
 
